@@ -16,7 +16,7 @@
         android:padding="15dp"
         android:background="@drawable/card_background"
         android:text="@string/explore_menu_geo_exploration"
-        android:onClick="gotoExploreMenu" />
+        android:onClick="gotoExploreGrid" />
     
     <TextView
         android:layout_width="match_parent"

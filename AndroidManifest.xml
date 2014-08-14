@@ -26,6 +26,10 @@
             android:name=".ExploreMenuActivity"
             android:label="@string/title_activity_explore_menu" >
         </activity>
+        <activity
+            android:name=".ExploreGridActivity"
+            android:label="@string/title_activity_explore_grid" >
+        </activity>
     </application>
 
 </manifest>
