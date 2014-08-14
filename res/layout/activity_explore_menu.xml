@@ -15,7 +15,7 @@
         android:layout_margin="15dp"
         android:padding="15dp"
         android:background="@drawable/card_background"
-        android:text="@string/main_menu_explore"
+        android:text="@string/explore_menu_geo_exploration"
         android:onClick="gotoExploreMenu" />
     
     <TextView
@@ -27,7 +27,7 @@
         android:layout_margin="15dp"
         android:padding="15dp"
         android:background="@drawable/card_background"
-        android:text="@string/main_menu_add_location" />
+        android:text="@string/explore_menu_user_adventure" />
     
     <TextView
         android:layout_width="match_parent"
@@ -38,6 +38,6 @@
         android:layout_margin="15dp"
         android:padding="15dp"
         android:background="@drawable/card_background"
-        android:text="@string/main_menu_about" />
+        android:text="@string/explore_menu_tutorial" />
 
 </LinearLayout>

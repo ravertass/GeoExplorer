@@ -22,6 +22,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ExploreMenuActivity"
+            android:label="@string/title_activity_explore_menu" >
+        </activity>
     </application>
 
 </manifest>
