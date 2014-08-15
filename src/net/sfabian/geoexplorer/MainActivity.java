@@ -27,11 +27,29 @@ public class MainActivity extends Activity {
 	}
 	
 	/** 
-	 * Called when the Game button is clicked in the main menu
+	 * Called when the "go exploring" button is clicked in the main menu
 	 */
 	public void gotoExploreMenu(View view) {
 		Intent intent = new Intent(this, ExploreMenuActivity.class);
+		// TODO Denna kommentar ligger mest kvar som en påminnelse
+		// Det är dock nog inte såhär som detta bör göras: Spara det i SharedPrefs istället
 		//intent.putExtra(LOCATION_PHOTOS_DIR_PATH, locationPhotosDirPath);
+		startActivity(intent);
+	}
+	
+	/** 
+	 * Called when the "add location" button is clicked in the main menu
+	 */
+	public void gotoAddLocation(View view) {
+		Intent intent = new Intent(this, AddLocationActivity.class);
+		startActivity(intent);
+	}
+	
+	/** 
+	 * Called when the "about" button is clicked in the main menu
+	 */
+	public void gotoAbout(View view) {
+		Intent intent = new Intent(this, AboutActivity.class);
 		startActivity(intent);
 	}
 }

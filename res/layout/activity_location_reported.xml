@@ -1,0 +1,49 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#E0E0E0"
+    tools:context="${relativePackage}.${activityClass}" >
+
+	<ScrollView 
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:layout_gravity="center"
+	    android:gravity="center"
+	    android:layout_margin="15dp"
+	    android:padding="15dp"
+	    android:background="@drawable/card_background"
+	    android:fillViewport="true" >
+	
+	    <LinearLayout
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:orientation="vertical" >
+	    
+			<TextView
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:layout_weight="6"
+			    android:layout_gravity="center"
+			    android:gravity="center"
+			    android:layout_margin="15dp"
+			    android:text="@string/location_reported_thank_you" />
+
+		    <Button
+		        android:layout_width="match_parent"
+		        android:layout_height="0dp"
+		        android:layout_weight="1"
+		        android:layout_gravity="center"
+		        android:gravity="center"
+		        android:layout_marginLeft="15dp"
+		        android:layout_marginRight="15dp"
+		        android:layout_marginBottom="15dp"
+		        android:text="@string/location_reported_continue_exploring"
+		        android:onClick="gotoExploreGrid" />
+	    
+	    </LinearLayout>
+	
+	</ScrollView>
+
+</LinearLayout>

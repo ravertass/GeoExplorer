@@ -19,11 +19,27 @@
     <string name="explore_location_i_am_here">I think I\'m here</string>
     <string name="explore_location_report">Report picture</string>
     <string name="location_found_well_done">Well done!\nYou found this location!</string>
-    <string name="title_activity_explore_menu">ExploreMenuActivity</string>
-    <string name="title_activity_explore_grid">ExploreGridActivity</string>
-    <string name="title_activity_explore_location">ExploreLocationActivity</string>
-    <string name="title_activity_location_found">LocationFoundActivity</string>
-    <string name="title_activity_report_location">ReportLocationActivity</string>
-    <string name="title_activity_first_time">FirstTimeActivity</string>
+    <string name="report_location_what_is_wrong">What is wrong with this picture?</string>
+    <string name="report_location_explicit">It contains explicit content</string>
+    <string name="report_location_impossible">It is impossible to find</string>
+    <string name="location_reported_thank_you">Thank you for reporting this picture. Your requested will be tended to as soon as possible.</string>
+    <string name="location_reported_continue_exploring">Continue exploring</string>
+    <string name="tutorial_text">How to play GeoExplorer\n \n1. Don\'t be stupid\n2. lol</string>
+    <string name="add_location_take_photo">Take a photo</string>
+    <string name="add_location_add_location">Add location</string>
+    <string name="add_location_enter_name">Enter location name</string>
+    <string name="about_text">This app was made for a course at a Uni.\n \nContact me at me\@sfabian.net for more appz.</string>
+    <string name="location_added_thank_you">Thank you for adding the location!</string>
+    <string name="title_activity_first_time">Welcome!</string>
+    <string name="title_activity_explore_menu">Go exploring</string>
+    <string name="title_activity_explore_grid">Nearby locations</string>
+    <string name="title_activity_explore_location">Location</string>
+    <string name="title_activity_location_found">Found it!</string>
+    <string name="title_activity_report_location">Report picture</string>
+    <string name="title_activity_location_reported">Picture reported</string>
+    <string name="title_activity_tutorial">Tutorial</string>
+    <string name="title_activity_add_location">Add a location</string>
+    <string name="title_activity_location_added">LocationAddedActivity</string>
+    <string name="title_activity_about">About</string>
 
 </resources>

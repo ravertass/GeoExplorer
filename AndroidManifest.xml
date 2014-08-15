@@ -46,6 +46,26 @@
             android:name=".FirstTimeActivity"
             android:label="@string/title_activity_first_time" >
         </activity>
+        <activity
+            android:name=".LocationReportedActivity"
+            android:label="@string/title_activity_location_reported" >
+        </activity>
+        <activity
+            android:name=".TutorialActivity"
+            android:label="@string/title_activity_tutorial" >
+        </activity>
+        <activity
+            android:name=".AddLocationActivity"
+            android:label="@string/title_activity_add_location" >
+        </activity>
+        <activity
+            android:name=".LocationAddedActivity"
+            android:label="@string/title_activity_location_added" >
+        </activity>
+        <activity
+            android:name=".AboutActivity"
+            android:label="@string/title_activity_about" >
+        </activity>
     </application>
 
 </manifest>

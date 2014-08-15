@@ -22,4 +22,12 @@ public class ExploreMenuActivity extends Activity {
 		//intent.putExtra(LOCATION_PHOTOS_DIR_PATH, locationPhotosDirPath);
 		startActivity(intent);
 	}
+	
+	/** 
+	 * Called when the tutorial button is clicked
+	 */
+	public void gotoTutorial(View view) {
+		Intent intent = new Intent(this, TutorialActivity.class);
+		startActivity(intent);
+	}
 }

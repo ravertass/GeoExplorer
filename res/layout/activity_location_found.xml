@@ -8,8 +8,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="6"
+        android:layout_height="match_parent"
         android:layout_gravity="center"
         android:gravity="center"
         android:layout_margin="15dp"
@@ -26,6 +25,7 @@
 	        android:id="@+id/location_found_map"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
+	        android:layout_weight="3"
 	        android:text="Här ska man finna en karta." />
 	    
 	    <TextView
@@ -33,21 +33,17 @@
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:text="@string/location_found_well_done" />
+	    
+	    <Button
+	        android:layout_width="match_parent"
+	        android:layout_height="0dp"
+	        android:layout_weight="1"
+	        android:layout_gravity="center"
+	        android:layout_marginTop="15dp"
+	        android:gravity="center"
+	        android:text="@string/ok"
+	        android:onClick="gotoExploreGrid" />
     
     </LinearLayout>
-    
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:layout_marginBottom="15dp"
-        android:padding="15dp"
-        android:background="@drawable/card_background"
-        android:text="@string/ok"
-        android:onClick="gotoExploreGrid" />
 
 </LinearLayout>

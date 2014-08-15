@@ -18,7 +18,7 @@
         android:text="@string/main_menu_explore"
         android:onClick="gotoExploreMenu" />
     
-    <TextView
+    <Button
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="2"
@@ -29,9 +29,10 @@
         android:layout_marginBottom="15dp"
         android:padding="15dp"
         android:background="@drawable/card_background"
-        android:text="@string/main_menu_add_location" />
+        android:text="@string/main_menu_add_location"
+        android:onClick="gotoAddLocation" />
     
-    <TextView
+    <Button
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -42,6 +43,7 @@
         android:layout_marginBottom="15dp"
         android:padding="15dp"
         android:background="@drawable/card_background"
-        android:text="@string/main_menu_about" />
+        android:text="@string/main_menu_about"
+        android:onClick="gotoAbout" />
 
 </LinearLayout>
