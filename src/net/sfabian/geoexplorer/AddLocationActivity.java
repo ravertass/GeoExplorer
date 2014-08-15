@@ -1,14 +1,15 @@
 package net.sfabian.geoexplorer;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 
-public class AddLocationActivity extends Activity {
+public class AddLocationActivity extends AbstractPlayServicesActivity {
 
 	private Button addLocationButton;
+	private ImageView photoView;
 	private String photoString;
 	
 	@Override
@@ -22,7 +23,10 @@ public class AddLocationActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_add_location);
 		
+		photoView = (ImageView) findViewById(R.id.add_location_photo);
 		addLocationButton = (Button) findViewById(R.id.add_location_add_location_button);
+		
+		
 	}
 	
 	/**
@@ -43,5 +47,11 @@ public class AddLocationActivity extends Activity {
 		Intent intent = new Intent(this, LocationAddedActivity.class);
 		intent.putExtra(getString(R.string.intent_key_photo_location), photoString);
 		startActivity(intent);
+	}
+
+	@Override
+	public void onConnected(Bundle connectionHint) {
+		// TODO Auto-generated method stub
+		
 	}
 }
