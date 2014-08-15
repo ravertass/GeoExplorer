@@ -13,6 +13,12 @@ public class AddLocationActivity extends Activity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		// TODO: Här ska vi kolla om AddLocation har körts förut, det kommer att sparas i SharedPref
+		if (true) {
+			Intent intent = new Intent(this, TermsActivity.class);
+			startActivity(intent);
+		}
+		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_add_location);
 		

@@ -66,6 +66,10 @@
             android:name=".AboutActivity"
             android:label="@string/title_activity_about" >
         </activity>
+        <activity
+            android:name=".TermsActivity"
+            android:label="@string/title_activity_terms" >
+        </activity>
     </application>
 
 </manifest>
