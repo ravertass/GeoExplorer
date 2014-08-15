@@ -3,13 +3,27 @@
 
     <string name="app_name">GeoExplorer</string>
     <string name="hello_world">Hello world!</string>
-    <string name="title_activity_explore_menu">ExploreMenuActivity</string>
+    <string name="ok">OK</string>
+    <string name="intent_key_stop_main_activity">stop_main_activity</string>
+    <string name="intent_key_photo_location">photo_location</string>
+    <string name="intent_key_proximity">proximity</string>
+    <string name="first_time_welcome_text">Welcome to GeoExplorer!\n \nYou will have a good time. Be ready for awesomeness unlimited all the time every time.</string>
     <string name="main_menu_explore">Go exploring</string>
     <string name="main_menu_add_location">Add a location</string>
     <string name="main_menu_about">About</string>
     <string name="explore_menu_geo_exploration">Geo Exploration\nSearch for locations added by the app team</string>
     <string name="explore_menu_user_adventure">User Adventure\nSearch for locations added by other users</string>
     <string name="explore_menu_tutorial">Tutorial\nLearn the ins and outs of exploration</string>
+    <string name="explore_location_location">Location: </string>
+    <string name="explore_location_already_found">You have found this location!</string>
+    <string name="explore_location_i_am_here">I think I\'m here</string>
+    <string name="explore_location_report">Report picture</string>
+    <string name="location_found_well_done">Well done!\nYou found this location!</string>
+    <string name="title_activity_explore_menu">ExploreMenuActivity</string>
     <string name="title_activity_explore_grid">ExploreGridActivity</string>
+    <string name="title_activity_explore_location">ExploreLocationActivity</string>
+    <string name="title_activity_location_found">LocationFoundActivity</string>
+    <string name="title_activity_report_location">ReportLocationActivity</string>
+    <string name="title_activity_first_time">FirstTimeActivity</string>
 
 </resources>

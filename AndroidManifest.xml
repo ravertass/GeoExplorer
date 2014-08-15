@@ -30,6 +30,22 @@
             android:name=".ExploreGridActivity"
             android:label="@string/title_activity_explore_grid" >
         </activity>
+        <activity
+            android:name=".ExploreLocationActivity"
+            android:label="@string/title_activity_explore_location" >
+        </activity>
+        <activity
+            android:name=".LocationFoundActivity"
+            android:label="@string/title_activity_location_found" >
+        </activity>
+        <activity
+            android:name=".ReportLocationActivity"
+            android:label="@string/title_activity_report_location" >
+        </activity>
+        <activity
+            android:name=".FirstTimeActivity"
+            android:label="@string/title_activity_first_time" >
+        </activity>
     </application>
 
 </manifest>

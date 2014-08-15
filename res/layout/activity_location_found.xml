@@ -6,42 +6,48 @@
     android:background="#E0E0E0"
     tools:context="${relativePackage}.${activityClass}" >
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="6"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_margin="15dp"
+        android:padding="15dp"
+        android:background="@drawable/card_background"
+    	android:orientation="vertical" >
+        
+        <TextView
+	        android:id="@+id/location_found_location_name"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content" />
+        
+	    <TextView
+	        android:id="@+id/location_found_map"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="Här ska man finna en karta." />
+	    
+	    <TextView
+	        android:id="@+id/location_found_already_found_text"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="@string/location_found_well_done" />
+    
+    </LinearLayout>
+    
     <Button
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="2"
         android:layout_gravity="center"
         android:gravity="center"
-        android:layout_margin="15dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginBottom="15dp"
         android:padding="15dp"
         android:background="@drawable/card_background"
-        android:text="@string/explore_menu_geo_exploration"
+        android:text="@string/ok"
         android:onClick="gotoExploreGrid" />
-    
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:layout_marginBottom="15dp"
-        android:padding="15dp"
-        android:background="@drawable/card_background"
-        android:text="@string/explore_menu_user_adventure" />
-    
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:layout_marginBottom="15dp"
-        android:padding="15dp"
-        android:background="@drawable/card_background"
-        android:text="@string/explore_menu_tutorial" />
 
 </LinearLayout>
