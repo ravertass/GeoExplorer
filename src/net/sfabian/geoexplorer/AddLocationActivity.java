@@ -49,6 +49,8 @@ public class AddLocationActivity extends AbstractPlayServicesActivity {
 	private static final int CAPTURE_IMAGE_REQUEST_CODE = 100; //TODO: Minns ej vad syftet med denna var
 	private static final String BUNDLE_PHOTO_PATH = "photo_path";
 	private static final String BUNDLE_PHOTO_TAKEN = "photo_taken";
+	private static final int SAMPLE_PHOTO_WIDTH = 1000; //TODO lite godtycklig siffra
+	private static final int SAMPLE_PHOTO_HEIGHT = 0; //TODO genom att låta den här vara 0 så löser det sig bra :P
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -227,11 +229,21 @@ public class AddLocationActivity extends AbstractPlayServicesActivity {
 				// TODO gör något åt utkommenterad kod
 //				Toast.makeText(this, R.string.toast_photo_captured, Toast.LENGTH_SHORT).show();
 				photoTaken = true;
+				rotateAndSamplePhoto();
 				showPhoto();			
 			} else if (resultCode == RESULT_CANCELED) {
 //				Toast.makeText(this, R.string.toast_photo_canceled, Toast.LENGTH_SHORT).show();
 			}
 		}
+	}
+
+	private void rotateAndSamplePhoto() {
+		// Rotate and sample the photo
+		Bitmap photoBitmap = BitmapHelper.getDecodedRotatedBitmap(
+				tempPhotoFile.getAbsolutePath(), SAMPLE_PHOTO_WIDTH, SAMPLE_PHOTO_HEIGHT);
+		// Save the rotated and sampled photo to the temp file.
+		// This way, a sampled photo will be sent to the server.
+		BitmapHelper.saveBitmapToFile(tempPhotoFile, photoBitmap);
 	}
 
 	// TODO: Döp om den här metoden, den gör lite mer
@@ -243,14 +255,9 @@ public class AddLocationActivity extends AbstractPlayServicesActivity {
 			return;
 		}
 		
-		// Rotate and sample the photo
-		Bitmap photoBitmap = BitmapHelper.getDecodedRotatedBitmap(
-				tempPhotoFile.getAbsolutePath(), photoWidth, photoHeight);
-		// Save the rotated and sampled photo to the temp file.
-		// This way, a sampled photo will be sent to the server.
-		BitmapHelper.saveBitmapToFile(tempPhotoFile, photoBitmap);
-		
 		// Sample the bitmap to the needed size
+		Bitmap photoBitmap = BitmapHelper.decodeSampledBitmapFromFile(
+				tempPhotoFile.getAbsolutePath(), photoWidth, photoHeight);
 		
 		// Display the photo
 		photoView.setImageBitmap(photoBitmap);

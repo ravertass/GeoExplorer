@@ -13,6 +13,30 @@ import android.util.Log;
 
 public class BitmapHelper {
 
+	public static Bitmap getCroppedScaledBitmap(Bitmap sourceBitmap, int reqWidth, int reqHeight) {
+		// This is a nifty way to get a square region of the bitmap
+		Bitmap croppedBitmap;
+		if (sourceBitmap.getWidth() > sourceBitmap.getHeight()) {
+			croppedBitmap = Bitmap.createBitmap(
+					sourceBitmap, 
+					sourceBitmap.getWidth()/2 - sourceBitmap.getHeight()/2,
+					0,
+					sourceBitmap.getHeight(),
+					sourceBitmap.getHeight());
+		} else {
+			croppedBitmap = Bitmap.createBitmap(
+					sourceBitmap,
+					0,
+					sourceBitmap.getHeight()/2 - sourceBitmap.getWidth()/2,
+					sourceBitmap.getWidth(),
+					sourceBitmap.getWidth());
+		}
+		// Here we scale the bitmap
+		Bitmap scaledBitmap = Bitmap.createScaledBitmap(croppedBitmap, reqWidth, reqHeight, false);
+		
+		return scaledBitmap;
+	}
+	
 	public static Bitmap getDecodedRotatedBitmap(String filePath, int reqWidth,
 			int reqHeight) {
 		return rotateBitmap(
@@ -65,6 +89,7 @@ public class BitmapHelper {
 		return inSampleSize;
 	}
 	
+	//TODO: Probably not needed
 	public static Bitmap rotateBitmapFile(String filePath) {
 		Bitmap sourceBitmap = BitmapFactory.decodeFile(filePath);
 		int rotation = getRotationFromFile(filePath);

@@ -1,9 +1,7 @@
 package net.sfabian.geoexplorer;
 
-import java.io.File;
 import java.util.ArrayList;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -81,8 +79,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		
 		String sqlQuery = "INSERT INTO " + PHOTOLOCATIONS_TABLE_NAME + " ("
 				+ KEY_ID + ", " + KEY_LATITUDE + ", " + KEY_LONGITUDE + ", "
-				+ KEY_PHOTO_PATH + ", " + KEY_LOCATION_NAME + ") VALUES ('" + photoLocation.getId() + "', '" + photoLocation.getLatitude()
-				+ "', '" + photoLocation.getLongitude() + "', '" + photoLocation.getPhotoFilePath(context) + "', '" + photoLocation.getLocationName() + "');";
+				+ KEY_PHOTO_PATH + ", " + KEY_LOCATION_NAME + ") VALUES ('"
+				+ photoLocation.getId() + "', '" + photoLocation.getLatitude()
+				+ "', '" + photoLocation.getLongitude() + "', '"
+				+ photoLocation.getPhotoFilePath(context) + "', '" + photoLocation.getLocationName() + "');";
 		Log.d(getClass().toString(), "query: "+sqlQuery);
 		database.execSQL(sqlQuery);
 
@@ -92,7 +92,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	}
 	
 	// TODO: Känns sjukt oklart om den här fungerar
-	public ArrayList<PhotoLocation> getAllPhotoLocations() {
+	public ArrayList<PhotoLocation> getAllPhotoLocations(int reqWidth, int reqHeight) {
 		SQLiteDatabase database = getReadableDatabase();
 		
 		String selectQuery = SELECT_ALL + PHOTOLOCATIONS_TABLE_NAME;
@@ -106,8 +106,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 						cursor.getInt(cursor.getColumnIndex(KEY_ID)),
 						cursor.getDouble(cursor.getColumnIndex(KEY_LATITUDE)),
 						cursor.getDouble(cursor.getColumnIndex(KEY_LONGITUDE)),
-						BitmapFactory.decodeFile(cursor.getString(cursor
-								.getColumnIndex(KEY_PHOTO_PATH))),
+						BitmapHelper.decodeSampledBitmapFromFile(cursor.getString(cursor
+								.getColumnIndex(KEY_PHOTO_PATH)), reqWidth, reqHeight),
 						cursor.getString(cursor
 								.getColumnIndex(KEY_LOCATION_NAME)));
 				photoLocations.add(photoLocation);

@@ -29,10 +29,10 @@
 	        android:text="Här ska man finna en karta." />
 	    
 	    <TextView
-	        android:id="@+id/location_found_already_found_text"
+	        android:id="@+id/location_found_are_we_there_text"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:text="@string/location_found_well_done" />
+	        android:text="@string/location_found_not_close" />
 	    
 	    <Button
 	        android:layout_width="match_parent"

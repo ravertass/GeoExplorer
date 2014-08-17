@@ -2,9 +2,6 @@ package net.sfabian.geoexplorer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,7 +28,7 @@ public class PhotoLocation {
 	private final static float thereRadius = 50; // in metres
 	// TODO: Den här siffran är ganska slumpvald
 	// This is fow how long the geofence will be active
-	private final static int geofenceExpirationDuration = 10000000; // in seconds (TODO: tror jag)
+	private final static int geofenceExpirationDuration = 10000000; // in milliseconds (TODO: välj mer medvetet)
 	private final static int geofenceTransitionTypes = 
 			Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT;
 	private static final String KEY_LATITUDE = "key_latitude";

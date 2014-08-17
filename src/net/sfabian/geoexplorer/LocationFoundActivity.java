@@ -1,5 +1,6 @@
 package net.sfabian.geoexplorer;
 
+import net.sfabian.geoexplorer.ExploreLocationActivity.ProximityToLocation;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,9 +15,28 @@ public class LocationFoundActivity extends Activity {
 		setContentView(R.layout.activity_location_found);
 		
 		TextView locationNameView = (TextView) findViewById(R.id.location_found_location_name);
+		TextView areWeThereTextView = (TextView) findViewById(R.id.location_found_are_we_there_text);
+		
+		Intent intent = getIntent();
+		ProximityToLocation proximity = ProximityToLocation.detachFrom(intent);
+		
+		// If the location was found
+		if (proximity == ProximityToLocation.THERE) {
+			// Get the photolocation from the database
+			int photoLocationId = intent.getIntExtra(getString(R.string.intent_key_photo_location), -1);
+			DatabaseHelper databaseHelper = new DatabaseHelper(getApplicationContext());
+			PhotoLocation photoLocation = databaseHelper.getPhotoLocation(photoLocationId);
 
-		// TODO: Plocka detta ur lokal databas, om stället är funnet
-		locationNameView.setText(getString(R.string.explore_location_location) + " " + "Name of location");
+			locationNameView.setText(getString(R.string.explore_location_location)
+					+ " " + photoLocation.getLocationName());
+			areWeThereTextView.setText(R.string.location_found_well_done);
+			// If the location is close by
+		} else if (proximity == ProximityToLocation.CLOSE) {
+			areWeThereTextView.setText(R.string.location_found_close);
+			// If the location is not even close
+		} else if (proximity == ProximityToLocation.NOT_CLOSE) {
+			areWeThereTextView.setText(R.string.location_found_not_close);
+		}
 	}
 	
 	/**
