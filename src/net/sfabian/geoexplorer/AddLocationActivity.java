@@ -243,17 +243,15 @@ public class AddLocationActivity extends AbstractPlayServicesActivity {
 			return;
 		}
 		
-		// Rotate the photo
-		Bitmap rotatedBitmap = BitmapHelper.rotateBitmapFile(tempPhotoFile.getAbsolutePath());
-		// Save it to the temp file
-		// TODO: I know this is kind of stupid, but I have to refactor and rewrite a lot
-		// to do this differently. But it would be better to just keep the rotated bitmap
-		// and stop doing things to the file.
-		BitmapHelper.saveBitmapToFile(tempPhotoFile, rotatedBitmap);
+		// Rotate and sample the photo
+		Bitmap photoBitmap = BitmapHelper.getDecodedRotatedBitmap(
+				tempPhotoFile.getAbsolutePath(), photoWidth, photoHeight);
+		// Save the rotated and sampled photo to the temp file.
+		// This way, a sampled photo will be sent to the server.
+		BitmapHelper.saveBitmapToFile(tempPhotoFile, photoBitmap);
 		
 		// Sample the bitmap to the needed size
-		Bitmap photoBitmap = BitmapHelper.decodeSampledBitmapFromFile(
-				tempPhotoFile.getAbsolutePath(), photoWidth, photoHeight);
+		
 		// Display the photo
 		photoView.setImageBitmap(photoBitmap);
 	}

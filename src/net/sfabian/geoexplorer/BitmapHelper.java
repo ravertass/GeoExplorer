@@ -12,13 +12,13 @@ import android.media.ExifInterface;
 import android.util.Log;
 
 public class BitmapHelper {
-//
-//	public static Bitmap getDecodedRotatedBitmap(String filePath, int reqWidth,
-//			int reqHeight) {
-//		return rotateBitmap(
-//				decodeSampledBitmapFromFile(filePath, reqWidth, reqHeight),
-//				getRotationFromFile(filePath));
-//	}
+
+	public static Bitmap getDecodedRotatedBitmap(String filePath, int reqWidth,
+			int reqHeight) {
+		return rotateBitmap(
+				decodeSampledBitmapFromFile(filePath, reqWidth, reqHeight),
+				getRotationFromFile(filePath));
+	}
 	
 	public static Bitmap decodeSampledBitmapFromFile(String filePath, int reqWidth, int reqHeight) {
 		
@@ -29,16 +29,12 @@ public class BitmapHelper {
 		BitmapFactory.decodeFile(filePath, options);
 		
 		// If the photo should be rotated, then we maybe need to switch width and height
-//		int rotation = getRotationFromFile(filePath);
-//		if (rotation == 0 || rotation == 180) {
-//			int tempValue = reqHeight;
-//			reqHeight = reqWidth;
-//			reqWidth = tempValue;
-//		}
-		
-//		TODO: Den här metoden är nog the shit:
-//		Bitmap.createScaledBitmap(src, dstWidth, dstHeight, filter)
-		
+		int rotation = getRotationFromFile(filePath);
+		if (rotation == 0 || rotation == 180) {
+			int tempValue = reqHeight;
+			reqHeight = reqWidth;
+			reqWidth = tempValue;
+		}
 		
 		options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
 		
@@ -73,6 +69,16 @@ public class BitmapHelper {
 		Bitmap sourceBitmap = BitmapFactory.decodeFile(filePath);
 		int rotation = getRotationFromFile(filePath);
 		
+		Matrix matrix = new Matrix();
+		matrix.postRotate(rotation);
+		Bitmap rotatedBitmap = Bitmap
+				.createBitmap(sourceBitmap, 0, 0, sourceBitmap.getWidth(),
+						sourceBitmap.getHeight(), matrix, true);
+
+		return rotatedBitmap;
+	}
+	
+	public static Bitmap rotateBitmap(Bitmap sourceBitmap, int rotation) {
 		Matrix matrix = new Matrix();
 		matrix.postRotate(rotation);
 		Bitmap rotatedBitmap = Bitmap

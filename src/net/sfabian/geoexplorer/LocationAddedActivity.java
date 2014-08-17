@@ -29,13 +29,14 @@ public class LocationAddedActivity extends Activity {
 		photoLocation = databaseHelper.getPhotoLocation(photoLocationId);
 		
 		locationNameView.setText(getString(R.string.explore_location_location) + " " + photoLocation.getLocationName());
-	}
-	
-	public void onWindowFocusChanged(boolean hasFocus) {
-		int width = photoView.getWidth();
-		int height = photoView.getHeight();
 		photoView.setImageBitmap(photoLocation.getPhoto());
 	}
+	
+//	public void onWindowFocusChanged(boolean hasFocus) {
+//		int width = photoView.getWidth();
+//		int height = photoView.getHeight();
+//		photoView.setImageBitmap(photoLocation.getPhoto());
+//	}
 	
 	/**
 	 * Called when the OK button is clicked
