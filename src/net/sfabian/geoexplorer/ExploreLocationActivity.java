@@ -51,12 +51,8 @@ public class ExploreLocationActivity extends Activity {
 		photoLocationId = intent.getIntExtra(getString(R.string.intent_key_photo_location), -1);
 		DatabaseHelper databaseHelper = new DatabaseHelper(getApplicationContext());
 		photoLocation = databaseHelper.getPhotoLocation(photoLocationId);
-		// Get if we are at the location
-		// TODO: med intenten ska man egentligen få en enum
-		boolean atLocation = intent.getBooleanExtra(getString(R.string.intent_key_proximity), false);
-		if (atLocation) {
-			proximity = ProximityToLocation.THERE;
-		}
+		// Get how close we are to the location
+		proximity = ProximityToLocation.detachFrom(intent);
 		
 		// TODO: Plocka ur en lokal databas om man har funnit stället. I så fall, visa denna text.
 		alreadyFoundTextView.setText(R.string.explore_location_already_found);
@@ -77,15 +73,31 @@ public class ExploreLocationActivity extends Activity {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			int photoLocationId = Integer.parseInt(intent.getStringExtra(ExploreGridActivity.GEOFENCE_ID));
+			// Get the geofence ID
+			String geofenceId = intent.getStringExtra(ExploreGridActivity.GEOFENCE_ID);
+			String[] idParts = geofenceId.split("_");
+			// The prefix of the geofenceId will tell us if it was a closeGeofence or thereGeofence
+			String geofenceType = idParts[0] +"_";
+			int photoLocationId = Integer.parseInt(idParts[1]);
+			
 			int transitionType = intent.getIntExtra(ExploreGridActivity.GEOFENCE_TRANSITION_TYPE, -1);
 			
 			// If the device entered the geofence corresponding to this location, we will note that
 			if (photoLocationId == photoLocation.getId()) {
 				if (transitionType == Geofence.GEOFENCE_TRANSITION_ENTER) {
-					proximity = ProximityToLocation.THERE;
+					if (geofenceType == PhotoLocation.GEOFENCE_THERE) {
+						proximity = ProximityToLocation.THERE;
+					} else if (geofenceType == PhotoLocation.GEOFENCE_CLOSE 
+							&& proximity != ProximityToLocation.THERE) {
+						proximity = ProximityToLocation.CLOSE;
+					}
 				} else if (transitionType == Geofence.GEOFENCE_TRANSITION_EXIT) {
-					proximity = ProximityToLocation.NOT_CLOSE;
+					if (geofenceType == PhotoLocation.GEOFENCE_THERE) {
+						proximity = ProximityToLocation.CLOSE;
+					} else if (geofenceType == PhotoLocation.GEOFENCE_CLOSE 
+							&& proximity != ProximityToLocation.THERE) {
+						proximity = ProximityToLocation.NOT_CLOSE;
+					}
 				}
 			}
 		}

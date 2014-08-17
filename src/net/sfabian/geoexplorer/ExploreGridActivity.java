@@ -1,7 +1,6 @@
 package net.sfabian.geoexplorer;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -11,6 +10,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
@@ -35,14 +35,15 @@ public class ExploreGridActivity extends AbstractPlayServicesActivity
 	private boolean gridInitialized = false;
 	private int photoSideLength;
 	private boolean connected = false;
-	private HashSet<Integer> thereGeofences;
+	// This map tells us how close the device is to a certain location (the keys are photoLoc IDs)
+	private SparseArray<ExploreLocationActivity.ProximityToLocation> locationProximities;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_explore_grid);
 		
-		thereGeofences = new HashSet<Integer>();
+		locationProximities = new SparseArray<ExploreLocationActivity.ProximityToLocation>();
 		
 		photoGrid = (LinearLayout) findViewById(R.id.explore_grid_photo_grid);
 		
@@ -60,7 +61,13 @@ public class ExploreGridActivity extends AbstractPlayServicesActivity
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			int photoLocationId = Integer.parseInt(intent.getStringExtra(GEOFENCE_ID));
+			// Get the geofence ID
+			String geofenceId = intent.getStringExtra(GEOFENCE_ID);
+			String[] idParts = geofenceId.split("_");
+			// The prefix of the geofenceId will tell us if it was a closeGeofence or thereGeofence
+			String geofenceType = idParts[0] + "_";
+			int photoLocationId = Integer.parseInt(idParts[1]);
+			
 			int transitionType = intent.getIntExtra(GEOFENCE_TRANSITION_TYPE, -1);
 			
 			Log.d(this.getClass().toString(), "Geofence transition! ID: "
@@ -69,10 +76,21 @@ public class ExploreGridActivity extends AbstractPlayServicesActivity
 			// If the device entered a geofence, we will note it is at the corresponding
 			// photolocation
 			if (transitionType == Geofence.GEOFENCE_TRANSITION_ENTER) {
-				thereGeofences.add(photoLocationId);
+				// If the device enters is at the photo location
+				if (geofenceType.equals(PhotoLocation.GEOFENCE_THERE)) {
+					locationProximities.put(photoLocationId, ExploreLocationActivity.ProximityToLocation.THERE);
+					// If the device enters the proximity of the photo location
+				} else if (geofenceType.equals(PhotoLocation.GEOFENCE_CLOSE)
+						&& locationProximities.get(photoLocationId) != ExploreLocationActivity.ProximityToLocation.THERE) {
+					locationProximities.put(photoLocationId, ExploreLocationActivity.ProximityToLocation.CLOSE);
+				}
 			} else if (transitionType == Geofence.GEOFENCE_TRANSITION_EXIT) {
-				if (thereGeofences.contains(photoLocationId)) {
-					thereGeofences.remove(photoLocationId);
+				// If the device moves away from the photo location
+				if (geofenceType.equals(PhotoLocation.GEOFENCE_THERE)) {
+					locationProximities.put(photoLocationId, ExploreLocationActivity.ProximityToLocation.CLOSE);
+					// If the device moves even further away from the photo location
+				} else if (geofenceType.equals(PhotoLocation.GEOFENCE_CLOSE)) {
+					locationProximities.put(photoLocationId, ExploreLocationActivity.ProximityToLocation.NOT_CLOSE);
 				}
 			}
 		}
@@ -146,7 +164,11 @@ public class ExploreGridActivity extends AbstractPlayServicesActivity
 		Intent intent = new Intent(this, ExploreLocationActivity.class);
 		intent.putExtra(getString(R.string.intent_key_photo_location), id);
 		// TODO gör detta med enum-proximity
-		intent.putExtra(getString(R.string.intent_key_proximity), thereGeofences.contains(id));
+		ExploreLocationActivity.ProximityToLocation proximity = locationProximities.get(id);
+		if (proximity == null) {
+			proximity = ExploreLocationActivity.ProximityToLocation.NOT_CLOSE;
+		}
+		proximity.attachTo(intent);
 		startActivity(intent);
 	}
 
@@ -165,6 +187,7 @@ public class ExploreGridActivity extends AbstractPlayServicesActivity
 			ArrayList<Geofence> geofences = new ArrayList<Geofence>();
 			for (PhotoLocation photoLocation : photoLocations) {
 				geofences.add(photoLocation.toThereGeofence());
+				geofences.add(photoLocation.toCloseGeofence());
 			}
 			
 			// Here we send the intent to start the tracking of geofences
@@ -182,7 +205,8 @@ public class ExploreGridActivity extends AbstractPlayServicesActivity
 
 	@Override
 	public void onAddGeofencesResult(int statusCode, String[] geofenceRequestIds) {
-		// TODO Auto-generated method stub
+		// TODO Visa inget förrän den här är färdig, egentligen!
+		// Visa en laddargrej!
 		if (statusCode == LocationStatusCodes.SUCCESS) {
 			Log.e(this.getClass().toString(), "success");
 		}

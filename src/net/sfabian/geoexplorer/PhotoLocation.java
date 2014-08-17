@@ -36,6 +36,9 @@ public class PhotoLocation {
 	private static final String KEY_PHOTO = "key_photo";
 	private static final String SAVED_PHOTOS_DIR_NAME = "saved_photos";
 	
+	public static final String GEOFENCE_THERE = "there_";
+	public static final String GEOFENCE_CLOSE = "close_";
+	
 	public PhotoLocation(int id, double latitude, double longitude, Bitmap photo, String locationName) {
 		this.id = id;
 		this.latitude = latitude;
@@ -102,16 +105,17 @@ public class PhotoLocation {
 	}
 
 	public Geofence toCloseGeofence() {
-		return toGeofence(closeRadius);
+		return toGeofence(closeRadius, GEOFENCE_CLOSE);
 	}
 	
 	public Geofence toThereGeofence() {
-		return toGeofence(thereRadius);
+		return toGeofence(thereRadius, GEOFENCE_THERE);
 	}
 	
-	private Geofence toGeofence(float radius) {
+	private Geofence toGeofence(float radius, String idPrefix) {
+		String geofenceId = idPrefix + id;
 		return new Geofence.Builder()
-				.setRequestId(Integer.toString(id))
+				.setRequestId(geofenceId)
 				.setTransitionTypes(geofenceTransitionTypes)
 				.setCircularRegion(latitude, longitude, radius)
 				.setExpirationDuration(geofenceExpirationDuration)
