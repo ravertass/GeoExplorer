@@ -1,5 +1,6 @@
 package net.sfabian.geoexplorer;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import android.content.ContentValues;
@@ -7,6 +8,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.graphics.BitmapFactory;
+import android.util.Log;
 
 // TODO: Det är lite otydlig hur den här kommer att bli.
 
@@ -24,9 +27,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	private static final String KEY_ID = "id";
 	
 	// photoLocations column names
-	private static final String KEY_LATITUDE = "latitude";
-	private static final String KEY_LONGITUDE = "longitude";
-	private static final String KEY_PHOTO = "photo";
+	public static final String KEY_LATITUDE = "latitude";
+	public static final String KEY_LONGITUDE = "longitude";
+	public static final String KEY_PHOTO_PATH = "photo_path";
+	public static final String KEY_LOCATION_NAME = "location_name";
 	
 	// Table create statements
 	private static final String CREATE_PHOTOLOCATIONS_TABLE =
@@ -34,8 +38,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			KEY_ID + " INTEGER PRIMARY KEY," +
 			KEY_LATITUDE + " DOUBLE," +
 			KEY_LONGITUDE + " DOUBLE," +
-			KEY_PHOTO + " TEXT)";
-	
+			KEY_PHOTO_PATH + " TEXT," +
+			KEY_LOCATION_NAME + " TEXT)";
 	private static final String CREATE_ADDED_PHOTOLOCATIONS_TABLE =
 			"CREATE TABLE " + ADDED_PHOTOLOCATIONS_TABLE_NAME + "(" +
 			KEY_ID + " INTEGER PRIMARY KEY)";
@@ -62,16 +66,29 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		onCreate(database);
 	}
 	
-	public void addPhotoLocation(PhotoLocation photoLocation) {
+	public boolean addPhotoLocation(PhotoLocation photoLocation, Context context) {
+		if (photoLocation.getId() == -1) {
+			return false;
+		}
+		
 		SQLiteDatabase database = getWritableDatabase();
 		
-		ContentValues values = new ContentValues();
-		values.put(KEY_ID, photoLocation.getId());
-		values.put(KEY_LATITUDE, photoLocation.getLatitude());
-		values.put(KEY_LONGITUDE, photoLocation.getLongitude());
-		values.put(KEY_PHOTO, photoLocation.getBase64Photo());
+//		ContentValues values = new ContentValues();
+//		values.put(KEY_ID, photoLocation.getId());
+//		values.put(KEY_LATITUDE, photoLocation.getLatitude());
+//		values.put(KEY_LONGITUDE, photoLocation.getLongitude());
+//		values.put(KEY_PHOTO, photoLocation.getBase64Photo());
 		
-		database.insert(PHOTOLOCATIONS_TABLE_NAME, null, values);
+		String sqlQuery = "INSERT INTO " + PHOTOLOCATIONS_TABLE_NAME + " ("
+				+ KEY_ID + ", " + KEY_LATITUDE + ", " + KEY_LONGITUDE + ", "
+				+ KEY_PHOTO_PATH + ", " + KEY_LOCATION_NAME + ") VALUES ('" + photoLocation.getId() + "', '" + photoLocation.getLatitude()
+				+ "', '" + photoLocation.getLongitude() + "', '" + photoLocation.getPhotoFilePath(context) + "', '" + photoLocation.getLocationName() + "');";
+		Log.d(getClass().toString(), "query: "+sqlQuery);
+		database.execSQL(sqlQuery);
+
+//		long id = database.insert(PHOTOLOCATIONS_TABLE_NAME, null, values);
+		
+		return true;
 	}
 	
 	// TODO: Känns sjukt oklart om den här fungerar
@@ -83,16 +100,48 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		
 		ArrayList<PhotoLocation> photoLocations = new ArrayList<PhotoLocation>();
 		
-		if (cursor.moveToFirst()) {
+		if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
 			while (!cursor.isAfterLast()) {
-				PhotoLocation photoLocation = new PhotoLocation(cursor.getInt(0),
-																cursor.getDouble(1),
-																cursor.getDouble(2),
-																cursor.getString(3));
+				PhotoLocation photoLocation = new PhotoLocation(
+						cursor.getInt(cursor.getColumnIndex(KEY_ID)),
+						cursor.getDouble(cursor.getColumnIndex(KEY_LATITUDE)),
+						cursor.getDouble(cursor.getColumnIndex(KEY_LONGITUDE)),
+						BitmapFactory.decodeFile(cursor.getString(cursor
+								.getColumnIndex(KEY_PHOTO_PATH))),
+						cursor.getString(cursor
+								.getColumnIndex(KEY_LOCATION_NAME)));
 				photoLocations.add(photoLocation);
+				cursor.moveToNext();
 			}
 		}
 		
+		cursor.close();
 		return photoLocations;
+	}
+
+	/**
+	 * @param photoLocationId
+	 * @return null if no photoLocation with that id exists in the database
+	 */
+	public PhotoLocation getPhotoLocation(int photoLocationId) {
+		SQLiteDatabase database = getReadableDatabase();
+		
+		String selectQuery = SELECT_ALL + PHOTOLOCATIONS_TABLE_NAME + " WHERE "
+				+ KEY_ID + " = " + photoLocationId;
+		Cursor cursor = database.rawQuery(selectQuery, null);
+		
+		PhotoLocation photoLocation = null;
+		if (cursor != null && cursor.getCount() > 0) {
+			cursor.moveToFirst();
+			photoLocation = new PhotoLocation(cursor.getInt(cursor.getColumnIndex(KEY_ID)),
+											cursor.getDouble(cursor.getColumnIndex(KEY_LATITUDE)),
+											cursor.getDouble(cursor.getColumnIndex(KEY_LONGITUDE)),
+											BitmapFactory.decodeFile(
+												cursor.getString(cursor.getColumnIndex(KEY_PHOTO_PATH))),
+											cursor.getString(cursor.getColumnIndex(KEY_LOCATION_NAME)));
+		}
+		
+		cursor.close();
+		return photoLocation;	
 	}
 }

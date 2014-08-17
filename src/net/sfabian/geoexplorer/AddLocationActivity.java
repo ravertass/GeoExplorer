@@ -1,35 +1,50 @@
 package net.sfabian.geoexplorer;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Random;
+
+import org.json.JSONObject;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 public class AddLocationActivity extends AbstractPlayServicesActivity {
 
 	private Button addLocationButton;
 	private ImageView photoView;
-	private String photoString;
 	private File tempPhotoFile;
 	private Button takePhotoButton;
+	private TextView locationTextView;
+	private EditText locationNameEditView;
 	
 	private int photoWidth = 0;
 	private int photoHeight = 0;
 	private boolean connected = false;
 	private boolean photoTaken = false;
+	private Location location;
+	private PhotoLocation photoLocation;
 	
-	private static final String TEMP_PHOTOS_DIR_NAME = "tempPhotos";
+	private static final String TEMP_PHOTOS_DIR_NAME = "temp_photos";
 	private static final String TIMESTAMP_FORMAT = "yyyyMMdd_HHmmss"; 
 	private static final int CAPTURE_IMAGE_REQUEST_CODE = 100; //TODO: Minns ej vad syftet med denna var
 	private static final String BUNDLE_PHOTO_PATH = "photo_path";
@@ -46,7 +61,10 @@ public class AddLocationActivity extends AbstractPlayServicesActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_add_location);
 		
+		locationNameEditView = (EditText) findViewById(R.id.add_location_edit_name);
+		addEditTextListener();
 		photoView = (ImageView) findViewById(R.id.add_location_photo);
+		locationTextView = (TextView) findViewById(R.id.add_location_location_text);
 		takePhotoButton = (Button) findViewById(R.id.add_location_take_photo_button);
 		addLocationButton = (Button) findViewById(R.id.add_location_add_location_button);
 
@@ -63,6 +81,26 @@ public class AddLocationActivity extends AbstractPlayServicesActivity {
 		// See callback "onConnected()" for what happens next
 	}
 	
+	private void addEditTextListener() {
+		locationNameEditView.addTextChangedListener(new TextWatcher() {
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				// do nothing
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count,
+					int after) {
+				// do nothing
+			}
+
+			@Override
+			public void afterTextChanged(Editable s) {
+				createPhotoLocation();
+			}
+		});
+	}
+
 	/**
 	 * This method gets the directory on the device where the camera will temporarily save
 	 * taken photos. This is stored in SharedPreferences. If this directory has not been
@@ -123,16 +161,49 @@ public class AddLocationActivity extends AbstractPlayServicesActivity {
 	 */
 	public void gotoLocationAdded(View view) {
 		// TODO lägg till locationen här...
+		JSONObject json = photoLocation.toJson();
+		// TODO send json to server
+		// TODO wait for OK and row ID back
+		// TODO add photoLocation to database
+		// TODO Tills vidare görs detta bara lokalt och vi sätter ett bullshit-ID på objektet
+		photoLocation.setId(new Random().nextInt(99999999));
+		
+		DatabaseHelper databaseHelper = new DatabaseHelper(getApplicationContext());
+		databaseHelper.addPhotoLocation(photoLocation, getApplicationContext());
+		
 		Intent intent = new Intent(this, LocationAddedActivity.class);
-		intent.putExtra(getString(R.string.intent_key_photo_location), photoString);
+		intent.putExtra(getString(R.string.intent_key_photo_location), photoLocation.getId());
 		startActivity(intent);
 	}
 
 	@Override
 	public void onConnected(Bundle connectionHint) {
 		connected = true;
-		
 		enablePhotoButton();
+		createPhotoLocation();
+	}
+
+	private void createPhotoLocation() {
+		if (!connected) {
+			return;
+		}
+		
+		// Get the current location
+		location = locationClient.getLastLocation();
+		double latitude = location.getLatitude();
+		double longitude = location.getLongitude();
+		locationTextView.setText("Latitude: " + latitude + "\nLongitude: " + longitude);
+		
+		String locationName = locationNameEditView.getText().toString();
+		if (photoTaken && locationName.length() > 0) {
+			photoLocation = new PhotoLocation(latitude,
+					longitude, BitmapFactory.decodeFile(tempPhotoFile
+							.getAbsolutePath()), locationName);
+			
+			// If the photo is taken, a name is given and we have the location,
+			// the user should be able to add the photo-location
+			addLocationButton.setEnabled(true);
+		}
 	}
 
 	private void takePhoto() {
@@ -163,20 +234,28 @@ public class AddLocationActivity extends AbstractPlayServicesActivity {
 		}
 	}
 
+	// TODO: Döp om den här metoden, den gör lite mer
+	// eller refaktorera om osv.
 	private void showPhoto() {
 		// This seems to be needed, since this method is somehow run when back is pressed
 		// This is probably because it is run in the onWindowFocusChanged() callback
 		if (!tempPhotoFile.exists()) {
 			return;
 		}
-		// Sample the bitmap to the needed size, and rotate the bitmap
-		Bitmap photoBitmap = BitmapHelper.getDecodedRotatedBitmap(
+		
+		// Rotate the photo
+		Bitmap rotatedBitmap = BitmapHelper.rotateBitmapFile(tempPhotoFile.getAbsolutePath());
+		// Save it to the temp file
+		// TODO: I know this is kind of stupid, but I have to refactor and rewrite a lot
+		// to do this differently. But it would be better to just keep the rotated bitmap
+		// and stop doing things to the file.
+		BitmapHelper.saveBitmapToFile(tempPhotoFile, rotatedBitmap);
+		
+		// Sample the bitmap to the needed size
+		Bitmap photoBitmap = BitmapHelper.decodeSampledBitmapFromFile(
 				tempPhotoFile.getAbsolutePath(), photoWidth, photoHeight);
 		// Display the photo
 		photoView.setImageBitmap(photoBitmap);
-		
-		// If a photo exists and is shown, the user should be able to add the location
-		addLocationButton.setEnabled(true);
 	}
 	
 	@Override

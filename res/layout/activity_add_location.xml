@@ -21,7 +21,8 @@
             android:id="@+id/add_location_edit_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/add_location_enter_name" />
+            android:hint="@string/add_location_enter_name"
+            android:singleLine="true" />
             
 		<ImageView
 		    android:id="@+id/add_location_photo"
@@ -30,7 +31,13 @@
 		    android:layout_weight="6"
 		    android:layout_gravity="center"
 		    android:gravity="center"
-		    android:layout_margin="15dp" />
+		    android:layout_marginTop="15dp"
+		    android:layout_marginBottom="5dp" />
+		
+		<TextView
+		    android:id="@+id/add_location_location_text"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content" />
 
 		<Button
 		    android:id="@+id/add_location_take_photo_button"
@@ -39,9 +46,7 @@
 	        android:layout_weight="2"
 	        android:layout_gravity="center"
 	        android:gravity="center"
-	        android:layout_marginLeft="15dp"
-	        android:layout_marginRight="15dp"
-	        android:layout_marginBottom="15dp"
+	        android:layout_margin="15dp"
 	        android:enabled="false"
 	        android:text="@string/add_location_take_photo"
 	        android:onClick="takePhotograph" />
@@ -49,8 +54,7 @@
 	    <Button
 	        android:id="@+id/add_location_add_location_button"
 	        android:layout_width="match_parent"
-	        android:layout_height="0dp"
-	        android:layout_weight="1"
+	        android:layout_height="wrap_content"
 	        android:layout_gravity="center"
 	        android:gravity="center"
 	        android:layout_marginLeft="15dp"

@@ -1,10 +1,20 @@
 package net.sfabian.geoexplorer;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Environment;
 import android.util.Base64;
+import android.util.Log;
 
 import com.google.android.gms.location.Geofence;
 
@@ -14,6 +24,7 @@ public class PhotoLocation {
 	private double latitude;
 	private double longitude;
 	private Bitmap photo;
+	private String locationName;
 	
 	// TODO: De här siffrorna kan behöva optimeras
 	private final static float closeRadius = 500; // in metres
@@ -23,20 +34,33 @@ public class PhotoLocation {
 	private final static int geofenceExpirationDuration = 10000000; // in seconds (TODO: tror jag)
 	private final static int geofenceTransitionTypes = 
 			Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT;
+	private static final String KEY_LATITUDE = "key_latitude";
+	private static final String KEY_LONGITUDE = "key_longitude";
+	private static final String KEY_PHOTO = "key_photo";
+	private static final String SAVED_PHOTOS_DIR_NAME = "saved_photos";
 	
-	public PhotoLocation(int id, double latitude, double longitude, Bitmap photo) {
+	public PhotoLocation(int id, double latitude, double longitude, Bitmap photo, String locationName) {
 		this.id = id;
 		this.latitude = latitude;
 		this.longitude = longitude;
 		this.photo = photo;
+		this.locationName = locationName;
 	}
 	
-	public PhotoLocation(int id, double latitude, double longitude, String base64Photo) {
-		this(id, latitude, longitude, base64ToBitmap(base64Photo));
+	public PhotoLocation(double latitude, double longitude, Bitmap photo, String locationName) {
+		this(-1, latitude, longitude, photo, locationName);
+	}
+	
+	public PhotoLocation(int id, double latitude, double longitude, String base64Photo, String locationName) {
+		this(id, latitude, longitude, base64ToBitmap(base64Photo), locationName);
 	}
 	
 	public int getId() {
 		return id;
+	}
+	
+	public void setId(int id) {
+		this.id = id;
 	}
 	
 	public double getLatitude() {
@@ -95,5 +119,49 @@ public class PhotoLocation {
 				.setCircularRegion(latitude, longitude, radius)
 				.setExpirationDuration(geofenceExpirationDuration)
 				.build();
+	}
+	
+	public JSONObject toJson() {
+		JSONObject json = new JSONObject();
+		
+		try {
+			json.put(KEY_LATITUDE, latitude);
+			json.put(KEY_LONGITUDE, longitude);
+			json.put(KEY_PHOTO, bitmapToBase64(photo));
+		} catch (JSONException e) {
+			Log.e(getClass().toString(), e.toString());
+		}
+		
+		return json;
+	}
+	
+	/**
+	 * 
+	 * @param context use getApplicationContext()
+	 * @return
+	 */
+	public String getPhotoFilePath(Context context) {
+		File tempPhotosDir = new File(
+				context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), SAVED_PHOTOS_DIR_NAME);
+		
+		// If the directories do not exist, create it
+		if (!tempPhotosDir.exists()) {
+			if (!tempPhotosDir.mkdirs()) {
+				// TODO Hantera detta bättre
+				Log.e(getClass().toString(), "Could not create saved photo directory");
+			}
+		}
+		
+		File savedPhotoFile = new File(tempPhotosDir.getPath() + File.separator + "IMG_" + id + ".jpg");
+		// If the file does not exist, we need to create it
+		if (!savedPhotoFile.exists()) {
+			BitmapHelper.saveBitmapToFile(savedPhotoFile, photo);
+		}
+		
+		return savedPhotoFile.getAbsolutePath();
+	}
+
+	public String getLocationName() {
+		return locationName;
 	}
 }

@@ -1,5 +1,8 @@
 package net.sfabian.geoexplorer;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 import android.graphics.Bitmap;
@@ -9,15 +12,15 @@ import android.media.ExifInterface;
 import android.util.Log;
 
 public class BitmapHelper {
-
-	public static Bitmap getDecodedRotatedBitmap(String filePath, int reqWidth,
-			int reqHeight) {
-		return rotateBitmap(
-				decodeSampledBitmapFromFile(filePath, reqWidth, reqHeight),
-				getRotationFromFile(filePath));
-	}
+//
+//	public static Bitmap getDecodedRotatedBitmap(String filePath, int reqWidth,
+//			int reqHeight) {
+//		return rotateBitmap(
+//				decodeSampledBitmapFromFile(filePath, reqWidth, reqHeight),
+//				getRotationFromFile(filePath));
+//	}
 	
-	private static Bitmap decodeSampledBitmapFromFile(String filePath, int reqWidth, int reqHeight) {
+	public static Bitmap decodeSampledBitmapFromFile(String filePath, int reqWidth, int reqHeight) {
 		
 		// First we check the dimensions of the bitmap
 		final BitmapFactory.Options options = new BitmapFactory.Options();
@@ -26,12 +29,16 @@ public class BitmapHelper {
 		BitmapFactory.decodeFile(filePath, options);
 		
 		// If the photo should be rotated, then we maybe need to switch width and height
-		int rotation = getRotationFromFile(filePath);
-		if (rotation == 0 || rotation == 180) {
-			int tempValue = reqHeight;
-			reqHeight = reqWidth;
-			reqWidth = tempValue;
-		}
+//		int rotation = getRotationFromFile(filePath);
+//		if (rotation == 0 || rotation == 180) {
+//			int tempValue = reqHeight;
+//			reqHeight = reqWidth;
+//			reqWidth = tempValue;
+//		}
+		
+//		TODO: Den här metoden är nog the shit:
+//		Bitmap.createScaledBitmap(src, dstWidth, dstHeight, filter)
+		
 		
 		options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
 		
@@ -62,7 +69,9 @@ public class BitmapHelper {
 		return inSampleSize;
 	}
 	
-	private static Bitmap rotateBitmap(Bitmap sourceBitmap, int rotation) {
+	public static Bitmap rotateBitmapFile(String filePath) {
+		Bitmap sourceBitmap = BitmapFactory.decodeFile(filePath);
+		int rotation = getRotationFromFile(filePath);
 		
 		Matrix matrix = new Matrix();
 		matrix.postRotate(rotation);
@@ -99,5 +108,21 @@ public class BitmapHelper {
 			break;
 		}
 		return rotation;
+	}
+	
+	public static void saveBitmapToFile(File file, Bitmap bitmap) {
+		FileOutputStream out = null;
+		try {
+			out = new FileOutputStream(file.getAbsolutePath());
+			bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
+		} catch (FileNotFoundException e) {
+			Log.e("BitmapHelper", e.toString());
+		} finally {
+			try {
+				out.close();
+			} catch (IOException e) {
+				Log.e("BitmapHelper", e.toString());
+			}
+		}	
 	}
 }
