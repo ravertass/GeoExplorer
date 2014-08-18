@@ -135,6 +135,8 @@ public class AddLocationActivity extends AbstractPlayServicesActivity {
 		photoWidth = photoView.getWidth();
 		photoHeight = photoView.getHeight();
 		
+		Log.e("hm", "photoHeight: " + photoHeight);
+		
 		if (photoTaken) {
 			showPhoto();
 		}

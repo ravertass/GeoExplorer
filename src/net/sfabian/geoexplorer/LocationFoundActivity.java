@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class LocationFoundActivity extends Activity {
@@ -15,6 +16,7 @@ public class LocationFoundActivity extends Activity {
 		setContentView(R.layout.activity_location_found);
 		
 		TextView locationNameView = (TextView) findViewById(R.id.location_found_location_name);
+		ImageView smileyView = (ImageView) findViewById(R.id.location_found_smiley);
 		TextView areWeThereTextView = (TextView) findViewById(R.id.location_found_are_we_there_text);
 		
 		Intent intent = getIntent();
@@ -30,11 +32,14 @@ public class LocationFoundActivity extends Activity {
 			locationNameView.setText(getString(R.string.explore_location_location)
 					+ " " + photoLocation.getLocationName());
 			areWeThereTextView.setText(R.string.location_found_well_done);
+			smileyView.setImageResource(R.drawable.smiley_found);
 			// If the location is close by
 		} else if (proximity == ProximityToLocation.CLOSE) {
 			areWeThereTextView.setText(R.string.location_found_close);
+			smileyView.setImageResource(R.drawable.smiley_close);
 			// If the location is not even close
 		} else if (proximity == ProximityToLocation.NOT_CLOSE) {
+			smileyView.setImageResource(R.drawable.smiley_not_close);
 			areWeThereTextView.setText(R.string.location_found_not_close);
 		}
 	}

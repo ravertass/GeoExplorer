@@ -24,7 +24,9 @@ import com.google.android.gms.location.LocationStatusCodes;
 public class ExploreGridActivity extends AbstractPlayServicesActivity 
 				implements OnAddGeofencesResultListener {
 	
-	private static final int PHOTOS_IN_ROW = 3;
+	private int PHOTOS_IN_ROW;
+	private static final int PHOTOS_IN_ROW_LANDSCAPE = 5;
+	private static final int PHOTOS_IN_ROW_PORTRAIT = 3;
 	public static final String GEOFENCE_BROADCAST = "geofence_broadcast";
 	public static final String GEOFENCE_ID = "geofence_id";
 	public static final String GEOFENCE_TRANSITION_TYPE = "geofence_transition_type";
@@ -42,6 +44,13 @@ public class ExploreGridActivity extends AbstractPlayServicesActivity
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_explore_grid);
+		
+		if (getResources().getConfiguration().orientation == getResources()
+				.getConfiguration().ORIENTATION_LANDSCAPE) {
+			PHOTOS_IN_ROW = PHOTOS_IN_ROW_LANDSCAPE;
+		} else {
+			PHOTOS_IN_ROW = PHOTOS_IN_ROW_PORTRAIT;
+		}
 		
 		locationProximities = new SparseArray<ExploreLocationActivity.ProximityToLocation>();
 		
@@ -137,7 +146,7 @@ public class ExploreGridActivity extends AbstractPlayServicesActivity
 			ImageButton photoButton = new ImageButton(this);
 			
 			LinearLayout.LayoutParams photoParams = new LinearLayout.LayoutParams(
-					photoSideLength, photoSideLength, 1);
+					photoSideLength, photoSideLength);
 			photoButton.setLayoutParams(photoParams);
 
 			photoButton

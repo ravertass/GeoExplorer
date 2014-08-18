@@ -1,0 +1,79 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#E0E0E0"
+    tools:context="${relativePackage}.${activityClass}" >
+
+	<ScrollView 
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:layout_gravity="center"
+	    android:gravity="center"
+	    android:layout_margin="15dp"
+	    android:padding="15dp"
+	    android:background="@drawable/card_background"
+	    android:fillViewport="true" >
+	
+	    <LinearLayout
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:orientation="vertical" >
+	    
+			<TextView
+			    android:id="@+id/report_location_photo"
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:layout_weight="6"
+			    android:layout_gravity="center"
+			    android:gravity="center"
+			    android:layout_margin="15dp" />
+
+		    <LinearLayout
+		        android:layout_width="match_parent"
+		        android:layout_height="0dp"
+		        android:layout_weight="2"
+		        android:orientation="vertical"
+		        android:layout_marginLeft="15dp"
+		        android:layout_marginRight="15dp"
+		        android:layout_marginBottom="15dp" >
+			    
+		        <TextView 
+		            android:layout_width="match_parent"
+		            android:layout_height="wrap_content"
+		            android:text="@string/report_location_what_is_wrong" />
+		    
+		        <CheckBox
+		            android:id="@+id/report_location_explicit_checkbox"
+		            android:layout_width="match_parent"
+		            android:layout_height="wrap_content"
+		            android:text="@string/report_location_explicit"
+		            android:onClick="onCheckboxClicked" />
+		        
+		        <CheckBox
+		            android:id="@+id/report_location_impossible_checkbox"
+		            android:layout_width="match_parent"
+		            android:layout_height="wrap_content"
+		            android:text="@string/report_location_impossible"
+		            android:onClick="onCheckboxClicked" />
+		        
+		    </LinearLayout>
+		    
+		    <Button
+		        android:layout_width="match_parent"
+		        android:layout_height="0dp"
+		        android:layout_weight="1"
+		        android:layout_gravity="center"
+		        android:gravity="center"
+		        android:layout_marginLeft="15dp"
+		        android:layout_marginRight="15dp"
+		        android:layout_marginBottom="15dp"
+		        android:text="@string/explore_location_report"
+		        android:onClick="gotoLocationReported" />
+	    
+	    </LinearLayout>
+	
+	</ScrollView>
+
+</LinearLayout>

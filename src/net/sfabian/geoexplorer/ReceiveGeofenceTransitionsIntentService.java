@@ -68,7 +68,7 @@ public class ReceiveGeofenceTransitionsIntentService extends IntentService {
 	private void postNotification() {
 		NotificationCompat.Builder builder = 
 				new NotificationCompat.Builder(this)
-				.setSmallIcon(R.drawable.notification)
+				.setSmallIcon(R.drawable.ic_notification)
 				.setContentTitle("Close to location!")
 				.setContentText("You seem to be close to one or multiple locations...");
 		// We create an intent to go to the photo grid activity
