@@ -27,7 +27,7 @@ public class ExploreMenuActivity extends Activity {
 	 * Called when the tutorial button is clicked
 	 */
 	public void gotoTutorial(View view) {
-		Intent intent = new Intent(this, TutorialActivity.class);
+		Intent intent = new Intent(this, RestTestActivity.class);
 		startActivity(intent);
 	}
 }
