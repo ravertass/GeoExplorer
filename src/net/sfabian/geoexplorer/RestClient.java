@@ -59,6 +59,16 @@ public class RestClient {
 		}
 	}
 	
+	public static String doGetFromServer(String url, double playerLatitude,
+			double playerLongitude) {
+		HashMap<String, String> headerValues = new HashMap<String, String>();
+		headerValues.put(API_METHOD, API_GET);
+		headerValues.put(API_LATITUDE, Double.toString(playerLatitude));
+		headerValues.put(API_LONGITUDE, Double.toString(playerLongitude));		
+		
+		return doGetString(url, headerValues);
+	}
+	
 	public static String doSendToServer(String url, double latitude,
 			double longitude, String photo, String name) {
 		HashMap<String, String> headerValues = new HashMap<String, String>();

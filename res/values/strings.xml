@@ -16,6 +16,7 @@
     <string name="explore_menu_tutorial">Tutorial\nLearn the ins and outs of exploration</string>
     <string name="explore_location_location">Location: </string>
     <string name="explore_location_already_found">You have found this location!</string>
+    <string name="explore_location_added_by_user">You added this location.</string>
     <string name="explore_location_i_am_here">I think I\'m here</string>
     <string name="explore_location_report">Report picture</string>
     <string name="location_found_well_done">Well done!\nYou found this location!</string>

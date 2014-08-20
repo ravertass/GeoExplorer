@@ -42,8 +42,8 @@ public class PhotoLocation {
 	public static final String GEOFENCE_CLOSE = "close_";
 	
 	public PhotoLocation(int id, double latitude, double longitude,
-			Bitmap photo, String locationName, boolean addedByUser,
-			boolean found) {
+			Bitmap photo, String locationName, boolean found,
+			boolean addedByUser) {
 		this.id = id;
 		this.latitude = latitude;
 		this.longitude = longitude;
@@ -57,9 +57,9 @@ public class PhotoLocation {
 		this(-1, latitude, longitude, photo, locationName, false, false);
 	}
 	
-//	public PhotoLocation(int id, double latitude, double longitude, String base64Photo, String locationName) {
-//		this(id, latitude, longitude, base64ToBitmap(base64Photo), locationName);
-//	}
+	public PhotoLocation(int id, double latitude, double longitude, String base64Photo, String locationName) {
+		this(id, latitude, longitude, base64ToBitmap(base64Photo), locationName, false, false);
+	}
 	
 	public int getId() {
 		return id;

@@ -7,6 +7,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.location.Location;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -19,7 +23,6 @@ import android.widget.LinearLayout;
 
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.LocationClient.OnAddGeofencesResultListener;
-import com.google.android.gms.location.LocationStatusCodes;
 
 public class ExploreGridActivity extends AbstractPlayServicesActivity 
 				implements OnAddGeofencesResultListener {
@@ -30,6 +33,8 @@ public class ExploreGridActivity extends AbstractPlayServicesActivity
 	public static final String GEOFENCE_BROADCAST = "geofence_broadcast";
 	public static final String GEOFENCE_ID = "geofence_id";
 	public static final String GEOFENCE_TRANSITION_TYPE = "geofence_transition_type";
+	private static final String BUNDLE_CONNECTED = "bundle_connected";
+	private static final String BUNDLE_WINDOW_FOCUS_CHANGED = "bundle_window_focus_changed";
 	
 	private LinearLayout photoGrid;
 	
@@ -37,6 +42,10 @@ public class ExploreGridActivity extends AbstractPlayServicesActivity
 	private boolean gridInitialized = false;
 	private int photoSideLength;
 	private boolean connected = false;
+	private boolean windowFocusChanged = false;
+	private boolean geofencesAddedAndPhotoLocationsLoadedFromServer = false;
+	private double playerLatitude;
+	private double playerLongitude;
 	// This map tells us how close the device is to a certain location (the keys are photoLoc IDs)
 	private SparseArray<ExploreLocationActivity.ProximityToLocation> locationProximities;
 	
@@ -44,6 +53,11 @@ public class ExploreGridActivity extends AbstractPlayServicesActivity
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_explore_grid);
+		
+		if (savedInstanceState != null) {
+			connected = savedInstanceState.getBoolean(BUNDLE_CONNECTED, false);
+			windowFocusChanged = savedInstanceState.getBoolean(BUNDLE_WINDOW_FOCUS_CHANGED, false);
+		}
 		
 		if (getResources().getConfiguration().orientation == getResources()
 				.getConfiguration().ORIENTATION_LANDSCAPE) {
@@ -114,12 +128,27 @@ public class ExploreGridActivity extends AbstractPlayServicesActivity
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
 		super.onWindowFocusChanged(hasFocus);
-		if (!gridInitialized) {
-			int gridWidth = photoGrid.getWidth();
-			photoSideLength = gridWidth / PHOTOS_IN_ROW;
+		
+//		nytt
+		// This should happen only on rotation
+		if (windowFocusChanged && !gridInitialized) {
+			getPhotoWidth();
 			getPhotoLocationsFromDatabase();
 			initializeGrid();
 		}
+		
+		windowFocusChanged = true;
+		
+		// This should happen the first time this activity is created (i.e. not on rotation)
+		if (connected && windowFocusChanged && !geofencesAddedAndPhotoLocationsLoadedFromServer) {
+			getPhotoWidth();
+			getPhotoLocationsFromServer();
+		}
+	}
+
+	private void getPhotoWidth() {
+		int gridWidth = photoGrid.getWidth();
+		photoSideLength = gridWidth / PHOTOS_IN_ROW;
 	}
 	
 	private void getPhotoLocationsFromDatabase() {
@@ -163,7 +192,6 @@ public class ExploreGridActivity extends AbstractPlayServicesActivity
 			photoRow.addView(photoButton);
 		}
 		gridInitialized = true;
-		createAndAddGeofences();
 	}
 	
 	/**
@@ -183,26 +211,26 @@ public class ExploreGridActivity extends AbstractPlayServicesActivity
 
 	@Override
 	public void onConnected(Bundle connectionHint) {
-		connected  = true;
+		connected = true;
 		
-		createAndAddGeofences();
+		// This should happen the first time this activity is created (i.e. not on rotation)
+		if (connected && windowFocusChanged && !geofencesAddedAndPhotoLocationsLoadedFromServer) {
+			getPhotoWidth();
+			getPhotoLocationsFromServer();
+		}
 	}
 	
 	private void createAndAddGeofences() {
-		// This check is to be sure that both onWindowFocusChanged() and
-		// onConnected() callbacks have been run
-		if (connected && gridInitialized) {
-			// Get geofences from all photolocations
-			ArrayList<Geofence> geofences = new ArrayList<Geofence>();
-			for (PhotoLocation photoLocation : photoLocations) {
-				geofences.add(photoLocation.toThereGeofence());
-				geofences.add(photoLocation.toCloseGeofence());
-			}
-			
-			// Here we send the intent to start the tracking of geofences
-			PendingIntent pendingIntent = getTransitionPendingIntent();
-			locationClient.addGeofences(geofences, pendingIntent, this);
+		// Get geofences from all photolocations
+		ArrayList<Geofence> geofences = new ArrayList<Geofence>();
+		for (PhotoLocation photoLocation : photoLocations) {
+			geofences.add(photoLocation.toThereGeofence());
+			geofences.add(photoLocation.toCloseGeofence());
 		}
+			
+		// Here we send the intent to start the tracking of geofences
+		PendingIntent pendingIntent = getTransitionPendingIntent();
+		locationClient.addGeofences(geofences, pendingIntent, this);
 	}
 	
 	private PendingIntent getTransitionPendingIntent() {
@@ -214,10 +242,40 @@ public class ExploreGridActivity extends AbstractPlayServicesActivity
 
 	@Override
 	public void onAddGeofencesResult(int statusCode, String[] geofenceRequestIds) {
-		// TODO Visa inget förrän den här är färdig, egentligen!
-		// Visa en laddargrej!
-		if (statusCode == LocationStatusCodes.SUCCESS) {
-			Log.e(this.getClass().toString(), "success");
+		initializeGrid();
+		geofencesAddedAndPhotoLocationsLoadedFromServer = true;
+	}
+	
+	private void getPhotoLocationsFromServer() {
+		DatabaseHelper databaseHelper = new DatabaseHelper(getApplicationContext());
+		databaseHelper.removeAllPhotoLocations();
+		
+		Location location = locationClient.getLastLocation();
+		playerLatitude = location.getLatitude();
+		playerLongitude = location.getLongitude();
+		
+		String url = RestClient.API_URL;
+		ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+		if (networkInfo != null && networkInfo.isConnected()) {
+			new ConnectToWebTask().execute(url);
+		} else {
+			//helloView.setText("No network connection available.");
+		}
+	}
+	
+	private class ConnectToWebTask extends AsyncTask<String, Void, String> {
+		@Override
+		protected String doInBackground(String... urls) {
+			return RestClient.doGetFromServer(urls[0], playerLatitude, playerLongitude);
+		}
+		@Override
+		protected void onPostExecute(String result) {
+			DatabaseHelper databaseHelper = new DatabaseHelper(getApplicationContext());
+			databaseHelper.addPhotoLocationsFromServer(result, getApplicationContext());
+			
+			getPhotoLocationsFromDatabase();
+			createAndAddGeofences();
 		}
 	}
 }

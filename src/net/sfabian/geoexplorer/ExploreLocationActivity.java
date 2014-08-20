@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -42,9 +43,7 @@ public class ExploreLocationActivity extends Activity {
 		TextView locationNameView = (TextView) findViewById(R.id.explore_location_location_name);
 		ImageView photoView = (ImageView) findViewById(R.id.explore_location_photo);
 		TextView alreadyFoundTextView = (TextView) findViewById(R.id.explore_location_already_found_text);
-		
-		// TODO: Plocka detta ur lokal databas, om stället är funnet
-		locationNameView.setText(getString(R.string.explore_location_location) + " " + "Name of location");
+		Button hereButton = (Button) findViewById(R.id.explore_location_here_button);
 		
 		Intent intent = getIntent();
 		// Get the photolocation from the database
@@ -54,8 +53,21 @@ public class ExploreLocationActivity extends Activity {
 		// Get how close we are to the location
 		proximity = ProximityToLocation.detachFrom(intent);
 		
-		// TODO: Plocka ur en lokal databas om man har funnit stället. I så fall, visa denna text.
-		alreadyFoundTextView.setText(R.string.explore_location_already_found);
+		locationNameView.setText(getString(R.string.explore_location_location) + " " + photoLocation.getLocationName());
+		
+		if (photoLocation.getFound()) {
+			alreadyFoundTextView.setText(R.string.explore_location_already_found);
+			// TODO såhär kanske man inte ska göra
+			hereButton.setVisibility(hereButton.INVISIBLE);
+			hereButton.setEnabled(false);
+		}
+		
+		if (photoLocation.getAddedByUser()) {
+			alreadyFoundTextView.setText(R.string.explore_location_added_by_user);
+			// TODO såhär kanske man inte ska göra
+			hereButton.setVisibility(hereButton.INVISIBLE);
+			hereButton.setEnabled(false);
+		}
 		
 		photoView.setImageBitmap(photoLocation.getPhoto());
 		

@@ -282,6 +282,8 @@ public class AddLocationActivity extends AbstractPlayServicesActivity {
 			photoLocation.setId(Integer.parseInt(result));
 			DatabaseHelper databaseHelper = new DatabaseHelper(getApplicationContext());
 			databaseHelper.addPhotoLocation(photoLocation, getApplicationContext());
+			// This notes that this photo location was added by the player, because... TODO
+			databaseHelper.addAddedPhotoLocation(photoLocation.getId());
 			
 			gotoNextActivity();
 		}

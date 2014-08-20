@@ -33,6 +33,8 @@ public class LocationFoundActivity extends Activity {
 					+ " " + photoLocation.getLocationName());
 			areWeThereTextView.setText(R.string.location_found_well_done);
 			smileyView.setImageResource(R.drawable.smiley_found);
+			// Add to the database that this location is found
+			databaseHelper.addFoundPhotoLocation(photoLocationId);
 			// If the location is close by
 		} else if (proximity == ProximityToLocation.CLOSE) {
 			areWeThereTextView.setText(R.string.location_found_close);

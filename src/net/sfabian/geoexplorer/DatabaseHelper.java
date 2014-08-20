@@ -2,6 +2,10 @@ package net.sfabian.geoexplorer;
 
 import java.util.ArrayList;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -163,6 +167,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		cursor.close();
 		return photoLocations;
 	}
+	
+	public void removeAllPhotoLocations() {
+		SQLiteDatabase database = getReadableDatabase();
+		
+		database.delete(PHOTOLOCATIONS_TABLE_NAME, null, null);	
+	}
 
 	/**
 	 * @param photoLocationId
@@ -219,5 +229,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		cursor.close();
 		
 		return isFound;	
+	}
+
+	// If this works life is magic
+	public void addPhotoLocationsFromServer(String jsonPhotoLocations, Context context) {
+		try {
+			JSONArray jsonArray = new JSONArray(jsonPhotoLocations);
+			
+			for (int i = 0; i < jsonArray.length(); i++) {
+				JSONObject row = jsonArray.getJSONObject(i);
+				PhotoLocation photoLocation = new PhotoLocation(row.getInt(RestClient.API_ID),
+																row.getDouble(RestClient.API_LATITUDE),
+																row.getDouble(RestClient.API_LONGITUDE),
+																row.getString(RestClient.API_PHOTO),
+																row.getString(RestClient.API_NAME));
+				addPhotoLocation(photoLocation, context);
+			}
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 	}
 }
