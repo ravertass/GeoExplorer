@@ -1,21 +1,19 @@
 package net.sfabian.geoexplorer;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Random;
 
-import org.json.JSONObject;
-
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -43,13 +41,17 @@ public class AddLocationActivity extends AbstractPlayServicesActivity {
 	private boolean photoTaken = false;
 	private Location location;
 	private PhotoLocation photoLocation;
+	private double sendLatitude;
+	private double sendLongitude;
+	private String sendPhoto;
+	private String sendName;
 	
 	private static final String TEMP_PHOTOS_DIR_NAME = "temp_photos";
 	private static final String TIMESTAMP_FORMAT = "yyyyMMdd_HHmmss"; 
 	private static final int CAPTURE_IMAGE_REQUEST_CODE = 100; //TODO: Minns ej vad syftet med denna var
 	private static final String BUNDLE_PHOTO_PATH = "photo_path";
 	private static final String BUNDLE_PHOTO_TAKEN = "photo_taken";
-	private static final int SAMPLE_PHOTO_WIDTH = 1000; //TODO lite godtycklig siffra
+	private static final int SAMPLE_PHOTO_WIDTH = 500; //TODO lite godtycklig siffra
 	private static final int SAMPLE_PHOTO_HEIGHT = 0; //TODO genom att låta den här vara 0 så löser det sig bra :P
 	
 	@Override
@@ -164,20 +166,12 @@ public class AddLocationActivity extends AbstractPlayServicesActivity {
 	 * Called when the "add location" button is clicked
 	 */
 	public void gotoLocationAdded(View view) {
-		// TODO lägg till locationen här...
-		JSONObject json = photoLocation.toJson();
-		// TODO send json to server
-		// TODO wait for OK and row ID back
-		// TODO add photoLocation to database
-		// TODO Tills vidare görs detta bara lokalt och vi sätter ett bullshit-ID på objektet
-		photoLocation.setId(new Random().nextInt(99999999));
+		sendLatitude = photoLocation.getLatitude();
+		sendLongitude = photoLocation.getLongitude();
+		sendPhoto = photoLocation.getBase64Photo();
+		sendName = photoLocation.getLocationName();
 		
-		DatabaseHelper databaseHelper = new DatabaseHelper(getApplicationContext());
-		databaseHelper.addPhotoLocation(photoLocation, getApplicationContext());
-		
-		Intent intent = new Intent(this, LocationAddedActivity.class);
-		intent.putExtra(getString(R.string.intent_key_photo_location), photoLocation.getId());
-		startActivity(intent);
+		sendPhotoLocationToServer();
 	}
 
 	@Override
@@ -263,6 +257,40 @@ public class AddLocationActivity extends AbstractPlayServicesActivity {
 		
 		// Display the photo
 		photoView.setImageBitmap(photoBitmap);
+	}
+	
+	private void sendPhotoLocationToServer() {
+		String url = RestClient.API_URL;
+		ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+		if (networkInfo != null && networkInfo.isConnected()) {
+			new ConnectToWebTask().execute(url);
+		} else {
+			//helloView.setText("No network connection available.");
+		}
+	}
+	
+	private class ConnectToWebTask extends AsyncTask<String, Void, String> {
+		@Override
+		protected String doInBackground(String... urls) {
+			return RestClient.doSendToServer(urls[0], sendLatitude, sendLongitude, sendPhoto, sendName);
+		}
+		@Override
+		protected void onPostExecute(String result) {
+			// Here, the taken photo is added to the local database, with the id taken from
+			// the web server
+			photoLocation.setId(Integer.parseInt(result));
+			DatabaseHelper databaseHelper = new DatabaseHelper(getApplicationContext());
+			databaseHelper.addPhotoLocation(photoLocation, getApplicationContext());
+			
+			gotoNextActivity();
+		}
+	}
+	
+	private void gotoNextActivity() {
+		Intent intent = new Intent(this, LocationAddedActivity.class);
+		intent.putExtra(getString(R.string.intent_key_photo_location), photoLocation.getId());
+		startActivity(intent);
 	}
 	
 	@Override

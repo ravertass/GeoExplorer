@@ -21,7 +21,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	private static final String PHOTOLOCATIONS_TABLE_NAME = "PhotoLocations";
 	private static final String ADDED_PHOTOLOCATIONS_TABLE_NAME = "AddedPhotoLocations";
 	private static final String FOUND_PHOTOLOCATIONS_TABLE_NAME = "FoundPhotoLocations";
-	private static final String REPORTED_PHOTOLOCATIONS_TABLE_NAME = "FoundPhotoLocations";
+	private static final String REPORTED_PHOTOLOCATIONS_TABLE_NAME = "ReportedPhotoLocations";
 	
 	// Common column name
 	private static final String KEY_ID = "id";

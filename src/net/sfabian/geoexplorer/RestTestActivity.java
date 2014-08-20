@@ -1,5 +1,8 @@
 package net.sfabian.geoexplorer;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -23,7 +26,7 @@ public class RestTestActivity extends Activity {
 	}
 
 	private void connectToNetwork() {
-		String url = "http://f.ethnoll.se/geoexplorer_api/?method=hello";
+		String url = "http://f.ethnoll.se/geoexplorer_api/?method=get&latitude=2.0&longitude=1.0";// + json.toString();
 		ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
 		if (networkInfo != null && networkInfo.isConnected()) {
@@ -37,7 +40,8 @@ public class RestTestActivity extends Activity {
 
 		@Override
 		protected String doInBackground(String... urls) {
-			return RestClient.doGetString(urls[0]);
+			return "lol";
+//			return RestClient.doGetString(urls[0]);
 		}
 
 		@Override
