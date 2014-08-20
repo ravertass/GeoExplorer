@@ -15,11 +15,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	
 	private static final int DATABASE_VERSION = 2; //TODO fett oklart vad denna siffra är
 	
-	private static final String DATABASE_NAME = "geoExplorer";
+	private static final String DATABASE_NAME = "GeoExplorer";
 	
 	// Tables
-	private static final String PHOTOLOCATIONS_TABLE_NAME = "photoLocations";
-	private static final String ADDED_PHOTOLOCATIONS_TABLE_NAME = "addedPhotoLocations";
+	private static final String PHOTOLOCATIONS_TABLE_NAME = "PhotoLocations";
+	private static final String ADDED_PHOTOLOCATIONS_TABLE_NAME = "AddedPhotoLocations";
+	private static final String FOUND_PHOTOLOCATIONS_TABLE_NAME = "FoundPhotoLocations";
+	private static final String REPORTED_PHOTOLOCATIONS_TABLE_NAME = "FoundPhotoLocations";
 	
 	// Common column name
 	private static final String KEY_ID = "id";
@@ -41,10 +43,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	private static final String CREATE_ADDED_PHOTOLOCATIONS_TABLE =
 			"CREATE TABLE " + ADDED_PHOTOLOCATIONS_TABLE_NAME + "(" +
 			KEY_ID + " INTEGER PRIMARY KEY)";
+	private static final String CREATE_FOUND_PHOTOLOCATIONS_TABLE =
+			"CREATE TABLE " + FOUND_PHOTOLOCATIONS_TABLE_NAME + "(" +
+			KEY_ID + " INTEGER PRIMARY KEY)";
+	private static final String CREATE_REPORTED_PHOTOLOCATIONS_TABLE =
+			"CREATE TABLE " + REPORTED_PHOTOLOCATIONS_TABLE_NAME + "(" +
+			KEY_ID + " INTEGER PRIMARY KEY)";
 	
 	private static final String DROP_TABLES = "DROP TABLES IF EXISTS ";
 	
-	private static final String SELECT_ALL ="SELECT * FROM ";
+	private static final String SELECT_ALL = "SELECT * FROM ";
 	
 	public DatabaseHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -54,12 +62,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public void onCreate(SQLiteDatabase database) {
 		database.execSQL(CREATE_PHOTOLOCATIONS_TABLE);
 		database.execSQL(CREATE_ADDED_PHOTOLOCATIONS_TABLE);
+		database.execSQL(CREATE_FOUND_PHOTOLOCATIONS_TABLE);
+		database.execSQL(CREATE_REPORTED_PHOTOLOCATIONS_TABLE);
 	}
 	
 	@Override
 	public void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion) {
 		database.execSQL(DROP_TABLES + PHOTOLOCATIONS_TABLE_NAME);
 		database.execSQL(DROP_TABLES + ADDED_PHOTOLOCATIONS_TABLE_NAME);
+		database.execSQL(DROP_TABLES + FOUND_PHOTOLOCATIONS_TABLE_NAME);
+		database.execSQL(DROP_TABLES + REPORTED_PHOTOLOCATIONS_TABLE_NAME);
 		
 		onCreate(database);
 	}
@@ -70,13 +82,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		}
 		
 		SQLiteDatabase database = getWritableDatabase();
-		
-//		ContentValues values = new ContentValues();
-//		values.put(KEY_ID, photoLocation.getId());
-//		values.put(KEY_LATITUDE, photoLocation.getLatitude());
-//		values.put(KEY_LONGITUDE, photoLocation.getLongitude());
-//		values.put(KEY_PHOTO, photoLocation.getBase64Photo());
-		
+
 		String sqlQuery = "INSERT INTO " + PHOTOLOCATIONS_TABLE_NAME + " ("
 				+ KEY_ID + ", " + KEY_LATITUDE + ", " + KEY_LONGITUDE + ", "
 				+ KEY_PHOTO_PATH + ", " + KEY_LOCATION_NAME + ") VALUES ('"
@@ -85,31 +91,70 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				+ photoLocation.getPhotoFilePath(context) + "', '" + photoLocation.getLocationName() + "');";
 		Log.d(getClass().toString(), "query: "+sqlQuery);
 		database.execSQL(sqlQuery);
-
-//		long id = database.insert(PHOTOLOCATIONS_TABLE_NAME, null, values);
 		
 		return true;
 	}
 	
-	// TODO: Känns sjukt oklart om den här fungerar
+	public void addFoundPhotoLocation(int id) {		
+		SQLiteDatabase database = getWritableDatabase();
+
+		String sqlQuery = "INSERT INTO " + FOUND_PHOTOLOCATIONS_TABLE_NAME + " ("
+				+ KEY_ID + ") VALUES ('" + id + "');";
+		Log.d(getClass().toString(), "query: "+sqlQuery);
+		database.execSQL(sqlQuery);
+	}
+	
+	public void addAddedPhotoLocation(int id) {		
+		SQLiteDatabase database = getWritableDatabase();
+
+		String sqlQuery = "INSERT INTO " + ADDED_PHOTOLOCATIONS_TABLE_NAME + " ("
+				+ KEY_ID + ") VALUES ('" + id + "');";
+		Log.d(getClass().toString(), "query: "+sqlQuery);
+		database.execSQL(sqlQuery);
+	}
+	
+	public void addReportedPhotoLocation(int id) {		
+		SQLiteDatabase database = getWritableDatabase();
+
+		String sqlQuery = "INSERT INTO " + REPORTED_PHOTOLOCATIONS_TABLE_NAME + " ("
+				+ KEY_ID + ") VALUES ('" + id + "');";
+		Log.d(getClass().toString(), "query: "+sqlQuery);
+		database.execSQL(sqlQuery);
+	}
+	
+	/**
+	 * Get all downloaded photolocations, except the ones that the user has reported.
+	 * Also notes if the photolocations have been found or added.
+	 * @param reqWidth
+	 * @param reqHeight
+	 * @return
+	 */
 	public ArrayList<PhotoLocation> getAllPhotoLocations(int reqWidth, int reqHeight) {
 		SQLiteDatabase database = getReadableDatabase();
-		
-		String selectQuery = SELECT_ALL + PHOTOLOCATIONS_TABLE_NAME;
+
+		String selectQuery = SELECT_ALL + PHOTOLOCATIONS_TABLE_NAME + " WHERE "
+				+ KEY_ID + " NOT IN (" + "SELECT " + KEY_ID + " FROM "
+				+ REPORTED_PHOTOLOCATIONS_TABLE_NAME + ");";
 		Cursor cursor = database.rawQuery(selectQuery, null);
 		
 		ArrayList<PhotoLocation> photoLocations = new ArrayList<PhotoLocation>();
 		
 		if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
 			while (!cursor.isAfterLast()) {
+				int id = cursor.getInt(cursor.getColumnIndex(KEY_ID));
+				boolean isFound = isPhotoLocationFound(id);
+				boolean isAdded = isPhotoLocationAdded(id);
+				
 				PhotoLocation photoLocation = new PhotoLocation(
-						cursor.getInt(cursor.getColumnIndex(KEY_ID)),
+						id,
 						cursor.getDouble(cursor.getColumnIndex(KEY_LATITUDE)),
 						cursor.getDouble(cursor.getColumnIndex(KEY_LONGITUDE)),
 						BitmapHelper.decodeSampledBitmapFromFile(cursor.getString(cursor
 								.getColumnIndex(KEY_PHOTO_PATH)), reqWidth, reqHeight),
 						cursor.getString(cursor
-								.getColumnIndex(KEY_LOCATION_NAME)));
+								.getColumnIndex(KEY_LOCATION_NAME)),
+						isFound,
+						isAdded);
 				photoLocations.add(photoLocation);
 				cursor.moveToNext();
 			}
@@ -130,18 +175,49 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				+ KEY_ID + " = " + photoLocationId;
 		Cursor cursor = database.rawQuery(selectQuery, null);
 		
+		
+		
 		PhotoLocation photoLocation = null;
 		if (cursor != null && cursor.getCount() > 0) {
 			cursor.moveToFirst();
-			photoLocation = new PhotoLocation(cursor.getInt(cursor.getColumnIndex(KEY_ID)),
+			
+			int id = cursor.getInt(cursor.getColumnIndex(KEY_ID));
+			boolean isFound = isPhotoLocationFound(id);
+			boolean isAdded = isPhotoLocationAdded(id);
+			
+			photoLocation = new PhotoLocation(id,
 											cursor.getDouble(cursor.getColumnIndex(KEY_LATITUDE)),
 											cursor.getDouble(cursor.getColumnIndex(KEY_LONGITUDE)),
 											BitmapFactory.decodeFile(
 												cursor.getString(cursor.getColumnIndex(KEY_PHOTO_PATH))),
-											cursor.getString(cursor.getColumnIndex(KEY_LOCATION_NAME)));
+											cursor.getString(cursor.getColumnIndex(KEY_LOCATION_NAME)),
+											isFound,
+											isAdded);
 		}
 		
 		cursor.close();
 		return photoLocation;	
+	}
+	
+	private boolean isPhotoLocationFound(int photoLocationId) {
+		return isPhotoLocationInTable(photoLocationId, FOUND_PHOTOLOCATIONS_TABLE_NAME);
+	}
+	
+	private boolean isPhotoLocationAdded(int photoLocationId) {
+		return isPhotoLocationInTable(photoLocationId, ADDED_PHOTOLOCATIONS_TABLE_NAME);
+	}
+	
+	private boolean isPhotoLocationInTable(int photoLocationId, String tableName) {
+		SQLiteDatabase database = getReadableDatabase();
+		
+		String selectQuery = SELECT_ALL + tableName + " WHERE "
+				+ KEY_ID + " = " + photoLocationId;
+		Cursor cursor = database.rawQuery(selectQuery, null);
+		
+		boolean isFound = (cursor != null && cursor.getCount() > 0);
+		
+		cursor.close();
+		
+		return isFound;	
 	}
 }

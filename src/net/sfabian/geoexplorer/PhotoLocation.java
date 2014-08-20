@@ -22,6 +22,8 @@ public class PhotoLocation {
 	private double longitude;
 	private Bitmap photo;
 	private String locationName;
+	private boolean addedByUser;
+	private boolean found;
 	
 	// TODO: De här siffrorna kan behöva optimeras
 	private final static float closeRadius = 500; // in metres
@@ -39,21 +41,25 @@ public class PhotoLocation {
 	public static final String GEOFENCE_THERE = "there_";
 	public static final String GEOFENCE_CLOSE = "close_";
 	
-	public PhotoLocation(int id, double latitude, double longitude, Bitmap photo, String locationName) {
+	public PhotoLocation(int id, double latitude, double longitude,
+			Bitmap photo, String locationName, boolean addedByUser,
+			boolean found) {
 		this.id = id;
 		this.latitude = latitude;
 		this.longitude = longitude;
 		this.photo = photo;
 		this.locationName = locationName;
+		this.addedByUser = addedByUser;
+		this.found = found;
 	}
 	
 	public PhotoLocation(double latitude, double longitude, Bitmap photo, String locationName) {
-		this(-1, latitude, longitude, photo, locationName);
+		this(-1, latitude, longitude, photo, locationName, false, false);
 	}
 	
-	public PhotoLocation(int id, double latitude, double longitude, String base64Photo, String locationName) {
-		this(id, latitude, longitude, base64ToBitmap(base64Photo), locationName);
-	}
+//	public PhotoLocation(int id, double latitude, double longitude, String base64Photo, String locationName) {
+//		this(id, latitude, longitude, base64ToBitmap(base64Photo), locationName);
+//	}
 	
 	public int getId() {
 		return id;
@@ -73,6 +79,18 @@ public class PhotoLocation {
 	
 	public Bitmap getPhoto() {
 		return photo;
+	}
+	
+	public String getLocationName() {
+		return locationName;
+	}
+	
+	public boolean getAddedByUser() {
+		return addedByUser;
+	}
+	
+	public boolean getFound() {
+		return found;
 	}
 	
 	/**
@@ -160,9 +178,5 @@ public class PhotoLocation {
 		}
 		
 		return savedPhotoFile.getAbsolutePath();
-	}
-
-	public String getLocationName() {
-		return locationName;
 	}
 }
