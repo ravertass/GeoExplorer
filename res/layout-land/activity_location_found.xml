@@ -1,0 +1,68 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#E0E0E0"
+    tools:context="${relativePackage}.${activityClass}" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_margin="15dp"
+        android:padding="15dp"
+        android:background="@drawable/card_background" >
+        
+        <LinearLayout
+	        android:layout_width="0dp"
+	        android:layout_height="match_parent"
+	        android:layout_weight="2"
+	        android:orientation="vertical"
+	        android:layout_gravity="center"
+		    android:gravity="center" >
+	        
+	        <TextView
+		        android:id="@+id/location_found_location_name"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:gravity="center" />
+	        
+	        <ImageView 
+	            android:id="@+id/location_found_smiley"
+	           	android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:gravity="center" />
+        
+        </LinearLayout>
+	    
+        <LinearLayout
+	        android:layout_width="0dp"
+	        android:layout_height="match_parent"
+	        android:layout_weight="1"
+	        android:orientation="vertical"
+	        android:layout_gravity="center"
+		    android:gravity="center" >
+	        
+		    <TextView
+		        android:id="@+id/location_found_are_we_there_text"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:text="@string/location_found_not_close" />
+		    
+		    <Button
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:layout_gravity="center"
+		        android:gravity="center"
+		        android:layout_margin="15dp"
+		        android:text="@string/ok"
+		        android:onClick="gotoExploreGrid" />
+		    
+	    </LinearLayout>
+	    
+    </LinearLayout>
+
+</LinearLayout>

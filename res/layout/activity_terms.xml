@@ -27,10 +27,10 @@
 	            android:text="@string/terms_text" />
 
 	        <Button
-	            android:layout_width="wrap_content"
+	            android:layout_width="match_parent"
 	            android:layout_height="wrap_content"
 	            android:layout_gravity="center_horizontal"
-	            android:layout_marginTop="15dp"
+	            android:layout_margin="15dp"
 	            android:onClick="gotoAddLocation"
 	            android:text="@string/ok" />
 	        

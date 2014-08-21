@@ -2,6 +2,7 @@ package net.sfabian.geoexplorer;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 
@@ -17,8 +18,9 @@ public class TermsActivity extends Activity {
 	 * Called when the OK button is clicked
 	 */
 	public void gotoAddLocation(View view) {
-		// TODO: Här ska vi i SharedPref sätta att AddLocation har körts, så att man inte kommer till
-		// den här aktiviteten igen
+		SharedPreferences sharedPrefs = getSharedPreferences(AddLocationActivity.SHARED_PREFS_NAME, MODE_PRIVATE);
+		sharedPrefs.edit().putBoolean(AddLocationActivity.SHARED_PREFS_ADDED_BEFORE_KEY, true).apply();
+		
 		finish();
 	}
 	

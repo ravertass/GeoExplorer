@@ -7,13 +7,10 @@
     <string name="intent_key_stop_main_activity">stop_main_activity</string>
     <string name="intent_key_photo_location">photo_location</string>
     <string name="intent_key_proximity">proximity</string>
-    <string name="first_time_welcome_text">Welcome to GeoExplorer!\n \nYou will have a good time. Be ready for awesomeness unlimited all the time every time.</string>
+    <string name="first_time_welcome_text">Welcome to GeoExplorer!\n \nGeoExplorer is a pervasive game of exploration and fun! Given a photograph, your objective is to explore your surroundings and find the depicted location.\n \nYou can also add your own locations, using your device\'s camera to take photographs.\n \nHave fun!</string>
     <string name="main_menu_explore">Go exploring</string>
     <string name="main_menu_add_location">Add a location</string>
     <string name="main_menu_about">About</string>
-    <string name="explore_menu_geo_exploration">Geo Exploration\nSearch for locations added by the app team</string>
-    <string name="explore_menu_user_adventure">User Adventure\nSearch for locations added by other users</string>
-    <string name="explore_menu_tutorial">Tutorial\nLearn the ins and outs of exploration</string>
     <string name="explore_location_location">Location: </string>
     <string name="explore_location_already_found">You have found this location!</string>
     <string name="explore_location_added_by_user">You added this location.</string>
@@ -27,25 +24,21 @@
     <string name="report_location_impossible">It is impossible to find</string>
     <string name="location_reported_thank_you">Thank you for reporting this picture. Your requested will be tended to as soon as possible.</string>
     <string name="location_reported_continue_exploring">Continue exploring</string>
-    <string name="tutorial_text">How to play GeoExplorer\n \n1. Don\'t be stupid\n2. lol</string>
     <string name="add_location_take_photo">Take a photo</string>
     <string name="add_location_add_location">Add location</string>
     <string name="add_location_enter_name">Enter location name</string>
-    <string name="about_text">This app was made for a course at a Uni.\n \nContact me at me\@sfabian.net for more appz.</string>
+    <string name="about_text">GeoExplorer was made in 2014 for a course at Gothenburg University.\n \nThis application was developed by Fabian Sörensson. Feel free to send an e-mail to me\@sfabian.net for any questions.</string>
     <string name="location_added_thank_you">Thank you for adding the location!</string>
-    <string name="terms_text">Please do not do anything illegal. :)</string>
+    <string name="terms_text">By pressing \'OK\' below, you agree to:\n \n- Not add any photographs with explicit, illegal or personal content.\n \n- Not add photographs that are too obscure, or photographs of places that are overly hard to reach.</string>
     <string name="title_activity_first_time">Welcome!</string>
-    <string name="title_activity_explore_menu">Go exploring</string>
     <string name="title_activity_explore_grid">Nearby locations</string>
     <string name="title_activity_explore_location">Location</string>
     <string name="title_activity_location_found">Found it!</string>
     <string name="title_activity_report_location">Report picture</string>
     <string name="title_activity_location_reported">Picture reported</string>
-    <string name="title_activity_tutorial">Tutorial</string>
     <string name="title_activity_add_location">Add a location</string>
-    <string name="title_activity_location_added">LocationAddedActivity</string>
+    <string name="title_activity_location_added">Location added!</string>
     <string name="title_activity_about">About</string>
-    <string name="title_activity_terms">TermsActivity</string>
-    <string name="title_activity_rest_test">RestTestActivity</string>
+    <string name="title_activity_terms">Terms</string>
 
 </resources>

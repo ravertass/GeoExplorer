@@ -7,6 +7,7 @@ import java.util.Locale;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
@@ -54,10 +55,16 @@ public class AddLocationActivity extends AbstractPlayServicesActivity {
 	private static final int SAMPLE_PHOTO_WIDTH = 500; //TODO lite godtycklig siffra
 	private static final int SAMPLE_PHOTO_HEIGHT = 0; //TODO genom att låta den här vara 0 så löser det sig bra :P
 	
+	public static final String SHARED_PREFS_NAME = "add_shared_prefs";
+	public static final String SHARED_PREFS_ADDED_BEFORE_KEY = "added_before_shared_prefs";
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO: Här ska vi kolla om AddLocation har körts förut, det kommer att sparas i SharedPref
-		if (false) {
+		
+		SharedPreferences sharedPrefs = getSharedPreferences(SHARED_PREFS_NAME, MODE_PRIVATE);
+		boolean addedBefore = sharedPrefs.getBoolean(SHARED_PREFS_ADDED_BEFORE_KEY, false);
+		
+		if (!addedBefore) {
 			Intent intent = new Intent(this, TermsActivity.class);
 			startActivity(intent);
 		}
