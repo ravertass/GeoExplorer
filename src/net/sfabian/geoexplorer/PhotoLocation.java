@@ -3,9 +3,6 @@ package net.sfabian.geoexplorer;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,33 +12,54 @@ import android.util.Log;
 
 import com.google.android.gms.location.Geofence;
 
-public class PhotoLocation {
+/**
+ * This class models a 'photolocation', which is very central to this app.
+ * The photolocation contains a location (latitude and longitude), a photograph
+ * and a name for the location. It also contains an ID (the ID of the photolocation
+ * in both the server's and the local databases) and booleans that determine if the
+ * photolocation has already been found and if it was added by the user. 
+ * 
+ * This class should probably actually be refactored. It is used both for photolocations
+ * loaded from the database and for newly added photolocations that do not have an ID.
+ * 
+ * @author sfabian
+ */
 
-	// Kommentera (och egentligen: refaktorera...)
-	private int todo;
+public class PhotoLocation {
 	
+	// The ID of this photolocation in both the local and the server's databases
 	private int id;
+	// The location of this photolocation
 	private double latitude;
 	private double longitude;
+	// A bitmap of the photo of this photolocatoin
 	private Bitmap photo;
+	// The name of this photolocation
 	private String locationName;
+	// If this photolocation was added by this user
 	private boolean addedByUser;
+	// If this photolocation has been found by this user
 	private boolean found;
 	
-	// TODO: De här siffrorna kan behöva optimeras
-	private final static float closeRadius = 500; // in metres
-	private final static float thereRadius = 50; // in metres
-	// TODO: Den här siffran är ganska slumpvald
-	// This is fow how long the geofence will be active
-	private final static int geofenceExpirationDuration = 10000000; // in milliseconds (TODO: välj mer medvetet)
+	// The radius in meters that determines if a user is close to the photolocation.
+	private final static float closeRadius = 500;
+	// The radius in meters that determines if the user is at the photolocation.
+	private final static float thereRadius = 50; 
+
+	// This is for how long a geofence of this photolocation will be active
+	// It is chosen kind of randomly, I must admit
+	private final static int geofenceExpirationDuration = 10000000; // in milliseconds
+	// These are the geofence transition types that are relevant for photolocations
 	private final static int geofenceTransitionTypes = 
 			Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT;
-	private static final String KEY_LATITUDE = "key_latitude";
-	private static final String KEY_LONGITUDE = "key_longitude";
-	private static final String KEY_PHOTO = "key_photo";
+	
+	// This is the name of the directory where photos of photolocations in the
+	// local database are saved 
 	private static final String SAVED_PHOTOS_DIR_NAME = "saved_photos";
 	
+	// The prefix of a geofence ID for a THERE geofence
 	public static final String GEOFENCE_THERE = "there_";
+	// The prefix of a geofence ID for a CLOSE geofence
 	public static final String GEOFENCE_CLOSE = "close_";
 	
 	public PhotoLocation(int id, double latitude, double longitude,
@@ -56,10 +74,19 @@ public class PhotoLocation {
 		this.found = found;
 	}
 	
+	/**
+	 * This constructor is used when adding a new photo location, and it yet
+	 * has not retrieved an ID from the server.
+	 */
 	public PhotoLocation(double latitude, double longitude, Bitmap photo, String locationName) {
 		this(-1, latitude, longitude, photo, locationName, false, false);
 	}
 	
+	/**
+	 * This is used when photolocations are created from JSON and then added to the database.
+	 * This is because JSONObject is taken from the server, and the server does not keep track
+	 * of whether users have found photolocations or what users have added them.
+	 */
 	public PhotoLocation(int id, double latitude, double longitude, String base64Photo, String locationName) {
 		this(id, latitude, longitude, base64ToBitmap(base64Photo), locationName, false, false);
 	}
@@ -97,9 +124,10 @@ public class PhotoLocation {
 	}
 	
 	/**
-	 * TODO
-	 * @param base64Photo
-	 * @return
+	 * This decode a bitmap saved as a base64 string back to a bitmap.
+	 * This is needed to retrieve photos from the server.
+	 * @param base64Photo bitmap encoded in base64
+	 * @return the decoded bitmap
 	 */
 	private static Bitmap base64ToBitmap(String base64Photo) {
 		byte[] bytes = Base64.decode(base64Photo, Base64.DEFAULT);
@@ -109,13 +137,18 @@ public class PhotoLocation {
 	}
 	
 	/**
-	 * TODO
-	 * @return
+	 * @return the photolocation's photo a a base64 string
 	 */
 	public String getBase64Photo() {
 		return bitmapToBase64(photo);
 	}
 	
+	/**
+	 * This encodes a bitmap to a base64 string.
+	 * This is needed to be able to send photos to the server.
+	 * @param photo
+	 * @return
+	 */
 	private String bitmapToBase64(Bitmap photo) {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		photo.compress(Bitmap.CompressFormat.JPEG, 100, baos);
@@ -125,14 +158,26 @@ public class PhotoLocation {
 		return encodedImage;
 	}
 
+	/**
+	 * @return a CLOSE geofence of this photolocation
+	 */
 	public Geofence toCloseGeofence() {
 		return toGeofence(closeRadius, GEOFENCE_CLOSE);
 	}
 	
+	/**
+	 * @return a THERE geofence of this photolocation
+	 */
 	public Geofence toThereGeofence() {
 		return toGeofence(thereRadius, GEOFENCE_THERE);
 	}
 	
+	/**
+	 * Creates a geofence of his photolocation.
+	 * @param radius the radius of the geofence
+	 * @param idPrefix what prefix the geofence ID should have
+	 * @return
+	 */
 	private Geofence toGeofence(float radius, String idPrefix) {
 		String geofenceId = idPrefix + id;
 		return new Geofence.Builder()
@@ -143,22 +188,9 @@ public class PhotoLocation {
 				.build();
 	}
 	
-	public JSONObject toJson() {
-		JSONObject json = new JSONObject();
-		
-		try {
-			json.put(KEY_LATITUDE, latitude);
-			json.put(KEY_LONGITUDE, longitude);
-			json.put(KEY_PHOTO, bitmapToBase64(photo));
-		} catch (JSONException e) {
-			Log.e(getClass().toString(), e.toString());
-		}
-		
-		return json;
-	}
-	
 	/**
-	 * 
+	 * This returns a file path to where this photolocation's photo is saved as a file.
+	 * If the photo is not saved as a file, this method saves it as a file. 
 	 * @param context use getApplicationContext()
 	 * @return
 	 */
@@ -166,16 +198,15 @@ public class PhotoLocation {
 		File tempPhotosDir = new File(
 				context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), SAVED_PHOTOS_DIR_NAME);
 		
-		// If the directories do not exist, create it
+		// If the directories do not exist, create them
 		if (!tempPhotosDir.exists()) {
 			if (!tempPhotosDir.mkdirs()) {
-				// TODO Hantera detta bättre
 				Log.e(getClass().toString(), "Could not create saved photo directory");
 			}
 		}
 		
 		File savedPhotoFile = new File(tempPhotosDir.getPath() + File.separator + "IMG_" + id + ".jpg");
-		// If the file does not exist, we need to create it
+		// If the file does not exist, we need to create it.
 		if (!savedPhotoFile.exists()) {
 			BitmapHelper.saveBitmapToFile(savedPhotoFile, photo);
 		}

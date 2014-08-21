@@ -4,6 +4,7 @@
     <string name="app_name">GeoExplorer</string>
     <string name="hello_world">Hello world!</string>
     <string name="ok">OK</string>
+    <string name="action_refresh">Refresh</string>
     <string name="intent_key_stop_main_activity">stop_main_activity</string>
     <string name="intent_key_photo_location">photo_location</string>
     <string name="intent_key_proximity">proximity</string>

@@ -333,6 +333,7 @@ public class AddLocationActivity extends AbstractPlayServicesActivity {
 	 * Called when the "add location" button is clicked
 	 */
 	public void gotoLocationAdded(View view) {
+		addLocationButton.setEnabled(false);
 		// Before going to the next activity, we need to send the photolocation
 		// to the server.
 		sendPhotoLocationToServer();

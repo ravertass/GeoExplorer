@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.ActionBarActivity;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -19,7 +19,7 @@ import com.google.android.gms.location.LocationClient;
  * 
  * @author sfabian
  */
-public abstract class AbstractPlayServicesActivity extends FragmentActivity implements 
+public abstract class AbstractPlayServicesActivity extends ActionBarActivity implements 
 	OnConnectionFailedListener, ConnectionCallbacks {
 	
 	private static final int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;

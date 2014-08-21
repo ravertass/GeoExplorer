@@ -279,7 +279,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	 * @param photoLocationId
 	 * @return if the photolocation with given ID was already found
 	 */
-	private boolean isPhotoLocationFound(int photoLocationId) {
+	public boolean isPhotoLocationFound(int photoLocationId) {
 		return isPhotoLocationInTable(photoLocationId, FOUND_PHOTOLOCATIONS_TABLE_NAME);
 	}
 	
@@ -287,7 +287,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	 * @param photoLocationId
 	 * @return if the photolocation with given ID was added by this user
 	 */
-	private boolean isPhotoLocationAdded(int photoLocationId) {
+	public boolean isPhotoLocationAdded(int photoLocationId) {
 		return isPhotoLocationInTable(photoLocationId, ADDED_PHOTOLOCATIONS_TABLE_NAME);
 	}
 	
@@ -319,11 +319,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	 * with photolocations loaded from the server, since they come in a JSON string.
 	 * @param jsonPhotoLocations
 	 * @param context
+	 * @return if there were any photolocations in the json
 	 */
-	public void addPhotoLocationsFromJson(String jsonPhotoLocations, Context context) {
+	public boolean addPhotoLocationsFromJson(String jsonPhotoLocations, Context context) {
 		try {
 			// Create the JSON array with photolocations from the given string
 			JSONArray jsonArray = new JSONArray(jsonPhotoLocations);
+			
+			if (jsonArray.length() == 0) {
+				return false;
+			}
 			
 			// If there are any photolocations in the JSON array, loop through them
 			for (int i = 0; i < jsonArray.length(); i++) {
@@ -341,6 +346,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}	
+		}
+
+		return true;
 	}
 }
