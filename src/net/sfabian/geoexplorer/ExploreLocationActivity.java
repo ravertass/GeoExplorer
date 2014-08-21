@@ -24,9 +24,6 @@ import com.google.android.gms.location.Geofence;
 
 public class ExploreLocationActivity extends Activity {
 	
-	// Report location
-	private int todo;
-	
 	/**
 	 * This is an enum for the user's proximity to a photolocation.
 	 * It contains method to attach and detach this enum to an intent.
@@ -61,6 +58,7 @@ public class ExploreLocationActivity extends Activity {
 	// TODO Texten på mittenknappen ska vara "OK" om man har hittat platsen. 
 	// Den ska då bara leda tillbaka till griden, och inte till foundLocation.
 	
+	@SuppressWarnings("static-access")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -166,13 +164,13 @@ public class ExploreLocationActivity extends Activity {
 		startActivity(intent);
 	}
 	
-	/**
-	 * Called when the report button is clicked
-	 */
-	public void gotoReportLocation(View view) {
-		Intent intent = new Intent(this, ReportLocationActivity.class);
-		// TODO: Här ska vi skicka med en databasnyckel till photolocationen i fråga.
-		intent.putExtra(getString(R.string.intent_key_photo_location), "lol");
-		startActivity(intent);
-	}
+//	/**
+//	 * Called when the report button is clicked
+//	 */
+//	public void gotoReportLocation(View view) {
+//		Intent intent = new Intent(this, ReportLocationActivity.class);
+//		// TODO: Här ska vi skicka med en databasnyckel till photolocationen i fråga.
+//		intent.putExtra(getString(R.string.intent_key_photo_location), "lol");
+//		startActivity(intent);
+//	}
 }

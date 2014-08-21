@@ -30,9 +30,6 @@ import android.widget.Toast;
 
 public class AddLocationActivity extends AbstractPlayServicesActivity {
 
-	// Rotationsproblem och brist på hantering av serverfelmeddelanden.
-	private int todo;
-	
 	// Layout entities
 	private Button addLocationButton;
 	private ImageView photoView;
@@ -80,6 +77,8 @@ public class AddLocationActivity extends AbstractPlayServicesActivity {
 	public static final String SHARED_PREFS_NAME = "add_shared_prefs";
 	// The key for the boolean that keeps track of if the user has accepted the terms.
 	public static final String SHARED_PREFS_ADDED_BEFORE_KEY = "added_before_shared_prefs";
+	// This key is used to keep the photo height on rotation
+	private static final String BUNDLE_PHOTO_HEIGHT = "bundle_photo_height";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -111,6 +110,7 @@ public class AddLocationActivity extends AbstractPlayServicesActivity {
 		
 		// If the device is rotated and a photo was taken, that photo should be kept
 		if (savedInstanceState != null) {
+			photoHeight = savedInstanceState.getInt(BUNDLE_PHOTO_HEIGHT);
 			tempPhotoFile = new File(savedInstanceState.getString(BUNDLE_PHOTO_PATH));
 			photoTaken = savedInstanceState.getBoolean(BUNDLE_PHOTO_TAKEN);
 			// See callback "onWindowFocusChanged()" for what happens next
@@ -177,7 +177,6 @@ public class AddLocationActivity extends AbstractPlayServicesActivity {
 	}
 	
 	/**
-	 * TODO: I thought this worked, but it does not seem to work on rotation...
 	 * This callback is overridden, because when this is run, we can get the widths
 	 * and heights of layout views. This is needed, to know to which size we should
 	 * sample the taken photo bitmap.
@@ -186,10 +185,13 @@ public class AddLocationActivity extends AbstractPlayServicesActivity {
 	public void onWindowFocusChanged(boolean hasFocus) {
 		super.onWindowFocusChanged(hasFocus);
 		
-		// We need to get these here, since they will return 0 before
-		// this method has been called
-		photoWidth = photoView.getWidth();
-		photoHeight = photoView.getHeight();
+		// This check is done because this shit does not really work with rotations
+		if (photoHeight == 0) {
+			// We need to get these here, since they will return 0 before
+			// this method has been called
+			photoWidth = photoView.getWidth();
+			photoHeight = photoView.getHeight();
+		}
 		
 		if (photoTaken) {
 			showPhoto();
@@ -239,6 +241,11 @@ public class AddLocationActivity extends AbstractPlayServicesActivity {
 		
 		// Get the entered location name
 		String locationName = locationNameEditView.getText().toString();
+		
+		// This is a pretty ugly way to fix the problem that the database
+		// does not allow inserting strings with ' (maybe it does in some way, but no easy way)
+		locationName = locationName.replaceAll("'", " ");
+		locationName = locationName.replaceAll("\"", " ");
 		
 		// If the name is long enough and a photo is taken, create the photolocation
 		// and enable the "add location" button.
@@ -385,11 +392,15 @@ public class AddLocationActivity extends AbstractPlayServicesActivity {
 		protected void onPostExecute(String result) {
 			// We get the ID from the web server and sets it to the photolocation.
 			// TODO: Here, error codes should be used. If the server returns something faulty,
-			// we do not want the app to just crash!
+			// we do not want the app to just crash! (well, someday I will fix this)
 			photoLocation.setId(Integer.parseInt(result));
 			
-			// We save the photolocation to the local database with the new ID.
+			
 			DatabaseHelper databaseHelper = new DatabaseHelper(getApplicationContext());
+			// This is done, because otherwise we may get an error that the ID must be unique, if
+			// the server's database table have been changed (e.g. something has been removed)
+			databaseHelper.removeAllPhotoLocations();
+			// We save the photolocation to the local database with the new ID.
 			databaseHelper.addPhotoLocation(photoLocation, getApplicationContext());
 			
 			// This notes that this photo location was added by the user, so that
@@ -424,6 +435,9 @@ public class AddLocationActivity extends AbstractPlayServicesActivity {
 		// These are needed to keep track of if a photo is taken, and the photo if one was taken.
 		savedInstanceState.putString(BUNDLE_PHOTO_PATH, tempPhotoFile.getAbsolutePath());
 		savedInstanceState.putBoolean(BUNDLE_PHOTO_TAKEN, photoTaken);
+		// It is actually pretty stupid to keep this, but for some reason it does not work
+		// to get the height in onWindowFocusChanged when the device is in landscape orientation...
+		savedInstanceState.putInt(BUNDLE_PHOTO_HEIGHT, photoHeight);
 		super.onSaveInstanceState(savedInstanceState);
 	}
 }

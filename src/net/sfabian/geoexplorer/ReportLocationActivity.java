@@ -7,12 +7,15 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
-public class ReportLocationActivity extends Activity {
+/**
+ * This is not used in the app as it is now. It is not that important.
+ * In this activity, users can report locations.
+ * I am keeping this if I want to implement it someday.
+ * 
+ * @author sfabian
+ */
 
-	// Antingen:
-	// ta bort
-	// eller
-	// kommentera och lägg faktiskt till funktionalitet...
+public class ReportLocationActivity extends Activity {
 	
 	private boolean explicitCheckboxChecked = false;
 	private boolean impossibleCheckboxChecked = false;
