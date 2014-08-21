@@ -17,6 +17,9 @@ import com.google.android.gms.location.LocationClient;
 
 public class ReceiveGeofenceTransitionsIntentService extends IntentService {
 	
+	// Kommentera och se till att notifications hanteras vettigt
+	private int todo;
+	
 	private static final int NOTIFICATION_ID = 9001;
 
 	public ReceiveGeofenceTransitionsIntentService() {

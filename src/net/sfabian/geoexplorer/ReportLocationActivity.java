@@ -9,6 +9,11 @@ import android.widget.TextView;
 
 public class ReportLocationActivity extends Activity {
 
+	// Antingen:
+	// ta bort
+	// eller
+	// kommentera och lägg faktiskt till funktionalitet...
+	
 	private boolean explicitCheckboxChecked = false;
 	private boolean impossibleCheckboxChecked = false;
 	

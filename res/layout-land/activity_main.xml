@@ -1,0 +1,54 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#E0E0E0"
+    android:orientation="vertical"
+    tools:context="${relativePackage}.${activityClass}" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:layout_margin="15dp"
+        android:orientation="horizontal" >
+        
+	    <Button
+	        android:layout_width="0dp"
+	        android:layout_height="match_parent"
+	        android:layout_weight="1"
+	        android:layout_gravity="center"
+	        android:layout_marginRight="15dp"
+	        android:padding="15dp"
+	        android:background="@drawable/card_background"
+	        android:text="@string/main_menu_explore"
+	        android:textSize="22sp"
+	        android:onClick="gotoExploreMenu" />
+	    
+	    <Button
+	        android:layout_width="0dp"
+	        android:layout_height="match_parent"
+	        android:layout_weight="1"
+	        android:gravity="center"
+	        android:padding="15dp"
+	        android:background="@drawable/card_background"
+	        android:text="@string/main_menu_add_location"
+	        android:textSize="22sp"
+	        android:onClick="gotoAddLocation" />
+    
+    </LinearLayout>
+    
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginBottom="15dp"
+        android:background="@drawable/card_background"
+        android:text="@string/main_menu_about"
+        android:onClick="gotoAbout" />
+
+</LinearLayout>

@@ -3,6 +3,11 @@ package net.sfabian.geoexplorer;
 import android.app.Activity;
 import android.os.Bundle;
 
+/**
+ * This activity simply contains a text about the app.
+ * @author sfabian
+ */
+
 public class AboutActivity extends Activity {
 
 	@Override

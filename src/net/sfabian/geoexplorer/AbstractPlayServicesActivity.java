@@ -14,16 +14,14 @@ import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListe
 import com.google.android.gms.location.LocationClient;
 
 /**
- * TODO
- * Idéen är att denna klass ska implementera alla metoder som behövs för att connecta med
- * Google Play Services, och att de klasser som behöver GPS-funktionalitet ska ärva från denna.
- * Tänkbart bör även andra metoder för GPS-funktionaliteten ligga här, men det är oklart just nu!
+ * This abstract class contains methods for connecting to the Google Play
+ * Services using their api.
  * 
- * @author fabian
+ * @author sfabian
  */
 public abstract class AbstractPlayServicesActivity extends FragmentActivity implements 
 	OnConnectionFailedListener, ConnectionCallbacks {
-
+	
 	private static final int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 	protected LocationClient locationClient;
 	
@@ -58,6 +56,11 @@ public abstract class AbstractPlayServicesActivity extends FragmentActivity impl
 		locationClient.disconnect();
 	}
 
+	/**
+	 * This method checks if Google Play Services are connected
+	 * and shows a error dialog fragment if it is not.
+	 * @return if Google Play Services are connected
+	 */
 	private boolean playServicesConnected() {
 		// Check if the Google Play services are available
 		int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
@@ -66,7 +69,9 @@ public abstract class AbstractPlayServicesActivity extends FragmentActivity impl
 			return true;
 		// If it for some reason was not available
 		} else {
-			// Get the error dialog from Google Play Services
+			// Get an error dialog from Google Play Services
+			// This dialog may let the user correct what is wrong
+			// If the user does, onActivityResult() will be run
 			Dialog errorDialog = GooglePlayServicesUtil.getErrorDialog(
 					resultCode,
 					this,
@@ -81,6 +86,11 @@ public abstract class AbstractPlayServicesActivity extends FragmentActivity impl
 		}
 	}
 	
+	/**
+	 * This callback is called if the Google Play Services error dialog lets the
+	 * user try to fix connection problems. If connections problems are fixed, 
+	 * the client will try to reconnect.
+	 */
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == CONNECTION_FAILURE_RESOLUTION_REQUEST) {
@@ -90,21 +100,37 @@ public abstract class AbstractPlayServicesActivity extends FragmentActivity impl
 		}
 	}
 
+	/**
+	 * This method is run when the location client has connected.
+	 * It is abstract, so the extending class needs to implement it.
+	 * This means the methods in this abstract class will connect the location client,
+	 * and the extending class can perform location operations after this callback has
+	 * been run.
+	 */
 	@Override
 	public abstract void onConnected(Bundle connectionHint);
 
+	/**
+	 * TODO: This should probably be handled differently.
+	 * This method is called if the location client for some reason disconnects.
+	 * This is handled in the most simple way here: the activity is finished and
+	 * the user is told of this.
+	 */
 	@Override
 	public void onDisconnected() {
-		// TODO Auto-generated method stub
-		Toast.makeText(this, "Disconnected", Toast.LENGTH_SHORT).show();
-
+		Toast.makeText(this, "Location client disconnected", Toast.LENGTH_SHORT).show();
+		finish();
 	}
 
+	/**
+	 * TODO: This should probably be handled differently.
+	 * This method is run if the location client for some reason cannot connect.
+	 * This is handled in the most simple way here: the activity is finished
+	 * and the user is told of this. 
+	 */
 	@Override
 	public void onConnectionFailed(ConnectionResult result) {
-		// TODO Auto-generated method stub
-		// TODO: Den här metoden borde göra en del mer
-		Toast.makeText(this, "Connection failed", Toast.LENGTH_SHORT).show();
-
+		Toast.makeText(this, "Location client connection failed", Toast.LENGTH_SHORT).show();
+		finish();
 	}
 }

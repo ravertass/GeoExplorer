@@ -5,6 +5,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+/**
+ * This activity is shown when a photolocation has been reported by the user.
+ * It thanks the user for doing so.
+ * 
+ * @author fabian
+ */
 public class LocationReportedActivity extends Activity {
 
 	@Override
@@ -20,6 +26,10 @@ public class LocationReportedActivity extends Activity {
 		onBackPressed();
 	}
 	
+	/**
+	 * By overriding this method, the user will be taken back to the
+	 * ExploreGridActivity instead of the ReportLocationActivity.
+	 */
 	@Override
 	public void onBackPressed() {
 		Intent intent = new Intent(this, ExploreGridActivity.class);

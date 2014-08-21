@@ -17,6 +17,9 @@ import com.google.android.gms.location.Geofence;
 
 public class PhotoLocation {
 
+	// Kommentera (och egentligen: refaktorera...)
+	private int todo;
+	
 	private int id;
 	private double latitude;
 	private double longitude;

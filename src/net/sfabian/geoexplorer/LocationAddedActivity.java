@@ -7,10 +7,19 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+/**
+ * This activity is shown when the user has added their own photolocation.
+ * It shows the photolocation and its name, and lets the user go back to the main menu. 
+ * 
+ * @author sfabian
+ */
+
 public class LocationAddedActivity extends Activity {
 	
+	// The layout view where the photo will be shown.
 	private ImageView photoView;
 	
+	// The added photolocation.
 	private PhotoLocation photoLocation;
 
 	@Override
@@ -18,25 +27,22 @@ public class LocationAddedActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_location_added);
 		
+		// Get layout entities.
 		TextView locationNameView = (TextView) findViewById(R.id.location_added_location_name);
 		photoView = (ImageView) findViewById(R.id.location_added_location_photo);
 		
+		// Get the ID of the added photolocation, so that it can be selected from the local database.
 		Intent intent = getIntent();
 		int photoLocationId = intent.getIntExtra(getString(R.string.intent_key_photo_location), -1);
 		
+		// Get the photolocation from the local database.
 		DatabaseHelper databaseHelper = new DatabaseHelper(getApplicationContext());
-//		PhotoLocation photoLocation = databaseHelper.getAllPhotoLocations().get(0);
 		photoLocation = databaseHelper.getPhotoLocation(photoLocationId);
 		
+		// Display the photolocation's name and display the photolocation photo.
 		locationNameView.setText(getString(R.string.explore_location_location) + " " + photoLocation.getLocationName());
 		photoView.setImageBitmap(photoLocation.getPhoto());
 	}
-	
-//	public void onWindowFocusChanged(boolean hasFocus) {
-//		int width = photoView.getWidth();
-//		int height = photoView.getHeight();
-//		photoView.setImageBitmap(photoLocation.getPhoto());
-//	}
 	
 	/**
 	 * Called when the OK button is clicked
@@ -45,6 +51,11 @@ public class LocationAddedActivity extends Activity {
 		onBackPressed();
 	}
 	
+	/**
+	 * The way this is overriden, the user will not be taken back to the
+	 * AddLocationActivity when pressing back or OK, they will be taken
+	 * to the main menu.
+	 */
 	@Override
 	public void onBackPressed() {
 		Intent intent = new Intent(this, MainActivity.class);

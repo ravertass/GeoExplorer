@@ -24,29 +24,54 @@ import android.widget.LinearLayout;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.LocationClient.OnAddGeofencesResultListener;
 
+/**
+ * This activity displays a grid with photos of nearby photolocations.
+ * The user can press photos to open an activity with that photo.
+ * This is in a way the 'main game activity'.
+ * 
+ * @author sfabian
+ */
+
+// I hope it's possible to understand the thread the callbacks in this activity!
+
 public class ExploreGridActivity extends AbstractPlayServicesActivity 
 				implements OnAddGeofencesResultListener {
 	
+	// Kommentera och lägg till uppdatera-knapp i actionbaren.
+	// Lägg också till laddaranimation, samt se till att det inte kraschar om inget hittas
+	// och att det sägs då att inget hittades.
+	private int todo;
+	
+	// These numbers keep track of how many photos should be in a row in the grid.
 	private int PHOTOS_IN_ROW;
 	private static final int PHOTOS_IN_ROW_LANDSCAPE = 5;
 	private static final int PHOTOS_IN_ROW_PORTRAIT = 3;
+	// These are keys used in intents to and from the geofence API.
 	public static final String GEOFENCE_BROADCAST = "geofence_broadcast";
 	public static final String GEOFENCE_ID = "geofence_id";
 	public static final String GEOFENCE_TRANSITION_TYPE = "geofence_transition_type";
+	// These keys are used to keep these variables on rotation. 
 	private static final String BUNDLE_CONNECTED = "bundle_connected";
 	private static final String BUNDLE_WINDOW_FOCUS_CHANGED = "bundle_window_focus_changed";
 	
+	// The grid layout with all photolocation photos.
 	private LinearLayout photoGrid;
 	
+	// The photolocations in the grid.
 	private ArrayList<PhotoLocation> photoLocations;
-	private boolean gridInitialized = false;
+	// The side dimensions of the photos in the grid, used to sample and display photos correctly.
+	// It is initialized first in onWindowFocusChanged().
 	private int photoSideLength;
+	// These variables keep track if certain tasks have been performed, because
+	// they are needed to be checked in callbacks that may be called in different orders.
+	private boolean gridInitialized = false;
 	private boolean connected = false;
 	private boolean windowFocusChanged = false;
 	private boolean geofencesAddedAndPhotoLocationsLoadedFromServer = false;
+	// The current latitude and longitude of the player.
 	private double playerLatitude;
 	private double playerLongitude;
-	// This map tells us how close the device is to a certain location (the keys are photoLoc IDs)
+	// This map tells us how close the device is to a certain location (the keys are photoLoc IDs).
 	private SparseArray<ExploreLocationActivity.ProximityToLocation> locationProximities;
 	
 	@Override
@@ -272,7 +297,7 @@ public class ExploreGridActivity extends AbstractPlayServicesActivity
 		@Override
 		protected void onPostExecute(String result) {
 			DatabaseHelper databaseHelper = new DatabaseHelper(getApplicationContext());
-			databaseHelper.addPhotoLocationsFromServer(result, getApplicationContext());
+			databaseHelper.addPhotoLocationsFromJson(result, getApplicationContext());
 			
 			getPhotoLocationsFromDatabase();
 			createAndAddGeofences();

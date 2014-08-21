@@ -17,7 +17,7 @@
     <string name="explore_location_i_am_here">I think I\'m here</string>
     <string name="explore_location_report">Report picture</string>
     <string name="location_found_well_done">Well done!\nYou found this location!</string>
-    <string name="location_found_not_close">Nope!\nNot even close!</string>
+    <string name="location_found_not_close">Nope!\nNot even close!\n \nRemember: It may be that your GPS is not functioning correctly at the moment. If you truly believe you are here, try again later.</string>
     <string name="location_found_close">Almost there!\nClose but no cigar!</string>
     <string name="report_location_what_is_wrong">What is wrong with this picture?</string>
     <string name="report_location_explicit">It contains explicit content</string>

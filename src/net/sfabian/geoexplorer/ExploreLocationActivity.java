@@ -16,6 +16,9 @@ import com.google.android.gms.location.Geofence;
 
 public class ExploreLocationActivity extends Activity {
 	
+	// kommentera
+	private int todo;
+	
 	public enum ProximityToLocation {
 		NOT_CLOSE, CLOSE, THERE;
 		

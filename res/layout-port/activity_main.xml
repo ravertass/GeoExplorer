@@ -16,6 +16,7 @@
         android:padding="15dp"
         android:background="@drawable/card_background"
         android:text="@string/main_menu_explore"
+        android:textSize="22sp"
         android:onClick="gotoExploreMenu" />
     
     <Button
@@ -30,6 +31,7 @@
         android:padding="15dp"
         android:background="@drawable/card_background"
         android:text="@string/main_menu_add_location"
+        android:textSize="22sp"
         android:onClick="gotoAddLocation" />
     
     <Button
