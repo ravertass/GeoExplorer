@@ -1,0 +1,8 @@
+-- GeoExplorer user's manual --
+------- by sfabian 2014 -------
+
+GeoExplorer is a pervasive game of exploration and fun!
+
+You are presented with photographs of nearby locations. Using just the photographs and the locations' names, you should try to find the locations! The app will notify you if you are close to a location. When you think you are there, press "I think I'm here" and the app will tell you if you found the location or not!
+
+You can also add your own locations! Just enter a location name and take a photograph. This way you can share locations with friends and strangers! Why not challenge your friends and add locations for each other?

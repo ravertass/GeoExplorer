@@ -1,0 +1,20 @@
+-- GeoExplorer developer's readme --
+-------- by sfabian -2014 ----------
+
+This is a standard Android project, with a directory structure like the one Eclipse creates.
+
+-- Introduction to the game and app --
+
+GeoExplorer is a pervasive game in the style of geocaching. In GeoExplorer, the player is presented a series of photographs of nearby locations. The player may then look at the photographs and try to find the locations depicted. If the player finds a location, he can press a button saying "I think I'm here". If he was correct, he is told so and the location is found.
+
+The player can also add his own locations. This is done by entering a location name, and taking a photograph. When the photograph is taken, the player's latitude and longitude is also saved.
+
+The combination photograph-location is called a 'photolocation'. When a photolocation is added, it is sent via HTTP POST to a server, where a PHP script puts it in a SQLite database. When the player looks for nearby photolocations, the player's latitude and longitude are sent to the server. These are then used to calculate which photolocations on the server are within a certain radius from the player. These photolocations are then sent back in JSON format to the app, and put in the app's local database. These photolocations are then presented to the player.
+
+The Google Play Services API, more precisely their location API, is used to get the location and to create geofences for photolocations. The location API then notifies the app when the player enters or exits a geofence.
+
+-- Classes --
+
+Most classes are Android activities. The most interesting activities are the AddLocationActivity and the ExploreGridActivity. The last one could also be called the 'game activity'. Study these to understand how the vital parts of the app are done.
+
+There is also a service, that is responsible for geofence communication with the Google Services API and sending notifications about these to the user. An abstract class, AbstractPlayServiceActivity, contains the methods for establishing a connection with the Google Services API. DatabaseHelper handles the communication with the local database, RestClient handles the communication with the server. BitmapHelper contains methods for handling bitmaps, such as rotating and scaling them. There is also a class that models photolocations.

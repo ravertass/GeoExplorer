@@ -200,6 +200,6 @@ public class BitmapHelper {
 			} catch (IOException e) {
 				Log.e("BitmapHelper", e.toString());
 			}
-		}	
+		}
 	}
 }

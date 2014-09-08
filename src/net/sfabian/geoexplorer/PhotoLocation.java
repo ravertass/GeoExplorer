@@ -2,11 +2,12 @@ package net.sfabian.geoexplorer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Environment;
 import android.util.Base64;
 import android.util.Log;
 
@@ -42,9 +43,9 @@ public class PhotoLocation {
 	private boolean found;
 	
 	// The radius in meters that determines if a user is close to the photolocation.
-	private final static float closeRadius = 500;
+	private final static float closeRadius = 1000;
 	// The radius in meters that determines if the user is at the photolocation.
-	private final static float thereRadius = 50; 
+	private final static float thereRadius = 100; 
 
 	// This is for how long a geofence of this photolocation will be active
 	// It is chosen kind of randomly, I must admit
@@ -52,10 +53,6 @@ public class PhotoLocation {
 	// These are the geofence transition types that are relevant for photolocations
 	private final static int geofenceTransitionTypes = 
 			Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT;
-	
-	// This is the name of the directory where photos of photolocations in the
-	// local database are saved 
-	private static final String SAVED_PHOTOS_DIR_NAME = "saved_photos";
 	
 	// The prefix of a geofence ID for a THERE geofence
 	public static final String GEOFENCE_THERE = "there_";
@@ -189,28 +186,27 @@ public class PhotoLocation {
 	}
 	
 	/**
-	 * This returns a file path to where this photolocation's photo is saved as a file.
-	 * If the photo is not saved as a file, this method saves it as a file. 
+	 * This creates a file for the photo and returns its path. 
 	 * @param context use getApplicationContext()
 	 * @return
 	 */
+	@SuppressWarnings("static-access")
 	public String getPhotoFilePath(Context context) {
-		File tempPhotosDir = new File(
-				context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), SAVED_PHOTOS_DIR_NAME);
-		
-		// If the directories do not exist, create them
-		if (!tempPhotosDir.exists()) {
-			if (!tempPhotosDir.mkdirs()) {
-				Log.e(getClass().toString(), "Could not create saved photo directory");
-			}
+
+		// Create a file path for the file
+		String filePath = "IMG_" + id + ".jpg";
+
+		// Create a file output stream and write the bitmap photo to it
+		FileOutputStream fos;
+		try {
+			fos = context.openFileOutput(filePath, context.MODE_PRIVATE);
+			photo.compress(Bitmap.CompressFormat.JPEG, 90, fos);
+		} catch (FileNotFoundException e) {
+			Log.e(getClass().toString(), "Could not save photo to file");
 		}
+	
+		String absolutePath = context.getFilesDir() + File.separator + filePath;
 		
-		File savedPhotoFile = new File(tempPhotosDir.getPath() + File.separator + "IMG_" + id + ".jpg");
-		// If the file does not exist, we need to create it.
-		if (!savedPhotoFile.exists()) {
-			BitmapHelper.saveBitmapToFile(savedPhotoFile, photo);
-		}
-		
-		return savedPhotoFile.getAbsolutePath();
+		return absolutePath;
 	}
 }
