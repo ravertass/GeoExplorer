@@ -1,8 +1,11 @@
 package net.sfabian.geoexplorer;
 
+import org.json.JSONException;
+
 import net.sfabian.geoexplorer.ExploreLocationActivity.ProximityToLocation;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -46,6 +49,13 @@ public class LocationFoundActivity extends Activity {
 			smileyView.setImageResource(R.drawable.smiley_found);
 			// Add to the database that this location is found
 			databaseHelper.addFoundPhotoLocation(photoLocationId);
+			
+			
+			// FELIX!=!=!=!=!
+			new CreatorFoundLocation().execute(CreatorClient.API_URL);
+			// FELIX?=?=?=?=?
+			
+			
 			// If the location is close by
 		} else if (proximity == ProximityToLocation.CLOSE) {
 			// Display the appropriate text and a cool smiley.
@@ -74,4 +84,37 @@ public class LocationFoundActivity extends Activity {
 		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		startActivity(intent);
 	}
+	
+	
+	
+	
+	/**
+	 * This class connects to our server and performs the HTTP requests to creator
+	 * @author sfabian
+	 */
+	private class CreatorFoundLocation extends AsyncTask<String, Void, String> {
+		/**
+		 * Sends a HTTP POST request to the server to retrieve nearby photolocations.
+		 */
+		@Override
+		protected String doInBackground(String... urls) {
+			try {
+				CreatorClient.doFoundLocation(urls[0]);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
+		/**
+		 * This callback is run after the above method. It adds the retrieved photolocations
+		 * to the local database.
+		 */
+		@Override
+		protected void onPostExecute(String result) {
+			// Back to GUI... I think?
+		}
+	}
+	
+	
+	
 }

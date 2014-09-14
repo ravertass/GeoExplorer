@@ -1,9 +1,12 @@
 package net.sfabian.geoexplorer;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 
 /**
@@ -13,7 +16,7 @@ import android.view.View;
  * @author sfabian
  */
 
-public class MainActivity extends Activity {
+public class MainActivity extends ActionBarActivity {
 
 	// Keys for the shared preferences, used to keep track of if the user has used the app before.
 	public static final String SHARED_PREFS_NAME = "main_shared_prefs";
@@ -70,4 +73,37 @@ public class MainActivity extends Activity {
 		Intent intent = new Intent(this, AboutActivity.class);
 		startActivity(intent);
 	}
+	
+	/**
+	 * This is overridden to add the choose player button to the action button.
+	 */
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate menu items for the action bar
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.main_activity_actions, menu);
+		return super.onCreateOptionsMenu(menu);
+	}
+	
+	/**
+	 * This is overridden to add the choose player button to the action bar.
+	 * Here the functionality of the button is added.
+	 */
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle presses on the action bar items
+		switch (item.getItemId()) {
+		case R.id.action_choose_player_button:
+			choosePlayer();
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
+	
+	private void choosePlayer() {
+		Intent intent = new Intent(this, ChoosePlayerActivity.class);
+		startActivity(intent);
+	}
+	
 }

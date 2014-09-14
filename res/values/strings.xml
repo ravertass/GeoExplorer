@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">GeoExplorer</string>
+    <string name="app_name">Schladming GeoExplorer</string>
     <string name="hello_world">Hello world!</string>
     <string name="ok">OK</string>
     <string name="action_refresh">Refresh</string>
+    <string name="action_choose_player">Choose player</string>
     <string name="intent_key_stop_main_activity">stop_main_activity</string>
     <string name="intent_key_photo_location">photo_location</string>
     <string name="intent_key_proximity">proximity</string>
-    <string name="first_time_welcome_text">Welcome to GeoExplorer!\n \nGeoExplorer is a pervasive game of exploration and fun! Given a photograph, your objective is to explore your surroundings and find the depicted location.\n \nYou can also add your own locations, using your device\'s camera to take photographs.\n \nWhile playing GeoExplorer, you should be aware that your GPS coordinates will be sent over an insecure connection to a central server. If you do not want others to be able to see your GPS coordinates, you should now back out. By pressing OK below, you accept this.\n \nHave fun!</string>
+    <string name="first_time_welcome_text">Welcome to Schladming GeoExplorer!\n \nSchladming GeoExplorer is a pervasive game of exploration and fun! Given a photograph, your objective is to explore your surroundings and find the depicted location.\n \nYou can also add your own locations, using your device\'s camera to take photographs.\n \nWhile playing Schladming GeoExplorer, you should be aware that your GPS coordinates will be sent over an insecure connection to a central server. If you do not want others to be able to see your GPS coordinates, you should now back out. By pressing OK below, you accept this.\n \nHave fun!</string>
     <string name="main_menu_explore">Go exploring</string>
     <string name="main_menu_add_location">Add a location</string>
     <string name="main_menu_about">About</string>
@@ -41,5 +42,6 @@
     <string name="title_activity_location_added">Location added!</string>
     <string name="title_activity_about">About</string>
     <string name="title_activity_terms">Terms</string>
+    <string name="title_activity_choose_player">Choose your player!</string>
 
 </resources>
