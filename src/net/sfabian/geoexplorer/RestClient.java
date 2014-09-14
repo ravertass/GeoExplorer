@@ -132,7 +132,9 @@ public class RestClient {
 			}
 		} catch (ClientProtocolException e) {
 			Log.e("RestClient", e.toString());
-		} catch (IllegalStateException | IOException e) {
+		} catch (IllegalStateException e) {
+			Log.e("RestClient", e.toString());
+		} catch (IOException e) {
 			Log.e("RestClient", e.toString());
 		}
 		

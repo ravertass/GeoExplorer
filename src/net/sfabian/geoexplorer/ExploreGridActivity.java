@@ -2,6 +2,8 @@ package net.sfabian.geoexplorer;
 
 import java.util.ArrayList;
 
+import org.json.JSONException;
+
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -173,11 +175,22 @@ public class ExploreGridActivity extends AbstractPlayServicesActivity
 		DatabaseHelper databaseHelper = new DatabaseHelper(getApplicationContext());
 		databaseHelper.removeAllPhotoLocations();
 		
+		// FELIX!=!=!=!=!=!
+		//new CreatorFoundLocation().execute(CreatorClient.API_URL);
+		
 		// Get the user's current location
-		Location location = locationClient.getLastLocation();
+		// TODO Crashes occasionally as gestLastLocation can return null.
+		Location location = null;
+		//while (location == null) {
+			location = locationClient.getLastLocation();
+		//}
+			
+		// FELIX?=?=?=?=?=?=?=?
+		
+			
 		playerLatitude = location.getLatitude();
 		playerLongitude = location.getLongitude();
-
+		
 		// This gets the URL for our API
 		String url = RestClient.API_URL;
 		// Connect to the internet
@@ -468,4 +481,45 @@ public class ExploreGridActivity extends AbstractPlayServicesActivity
 			super.onSaveInstanceState(savedInstanceState);
 		}
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * This class connects to our server and performs the HTTP requests to creator
+	 * @author sfabian
+	 */
+	private class CreatorFoundLocation extends AsyncTask<String, Void, String> {
+		/**
+		 * Sends a HTTP POST request to the server to retrieve nearby photolocations.
+		 */
+		@Override
+		protected String doInBackground(String... urls) {
+			try {
+				CreatorClient.doFoundLocation(urls[0]);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
+		/**
+		 * This callback is run after the above method. It adds the retrieved photolocations
+		 * to the local database.
+		 */
+		@Override
+		protected void onPostExecute(String result) {
+			// Back to GUI... I think?
+		}
+	}
+	
+	
+	
+	
 }

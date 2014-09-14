@@ -15,14 +15,13 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/explorer_logo"
+        android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
@@ -76,10 +75,16 @@
             android:name=".TermsActivity"
             android:label="@string/title_activity_terms" >
         </activity>
+
         <service
             android:name=".ReceiveGeofenceTransitionsIntentService"
             android:exported="false"
             android:label="@string/app_name" />
+
+        <activity
+            android:name=".ChoosePlayerActivity"
+            android:label="@string/title_activity_choose_player" >
+        </activity>
     </application>
 
 </manifest>
